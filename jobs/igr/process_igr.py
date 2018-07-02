@@ -6,7 +6,8 @@ from base.utils import excelprocess as ep
 from base.utils.setprocesspath import RunProcess
 from base.utils.Logger import Logger
 from base.utils import base_util as bu
-from jobs.igr import igrpdf as ip
+from jobs.igr import igrpdftext as iptext
+from jobs.igr import igrpdfhtml as iphtml
 from base.pdf import xpdf as xpdf
 try:
     from .igrexpressions import IGRExpressions
@@ -40,9 +41,10 @@ class ProcessIgr(RunProcess):
         if copyfrombase:
             self.copy_rawfiles(sourcefiles=True)
 
-    def add_fileinfo(self, file, directory, datadict=None, message=None):
+    @staticmethod
+    def add_fileinfo(file, directory, datadict=None, message=None):
         basename = os.path.basename(file)
-        filewoextn = basename.rsplit('.', 1)[0]
+        filewoextn = str(basename.rsplit('.', 1)[0])
         filedetail = "_".join(filewoextn.split(".")).split("_")
         datadict["CTSNo"] = filedetail[1]
         datadict["Year"] = filedetail[0][-4:]
@@ -51,7 +53,8 @@ class ProcessIgr(RunProcess):
         if message:
             datadict["message"] = message
 
-    def append_to_excel(self, worksheet, data, header=None):
+    @staticmethod
+    def append_to_excel(worksheet, data, header=None):
         try:
             assert isinstance(data, list)
             output = worksheet.get_excel_columns(data=data, header=header)
@@ -98,12 +101,12 @@ class ProcessIgr(RunProcess):
             errorfile, "Error", kwargs.get('exceloverwrite', False)
         )
         # Now initialize both html and text mode
-        xpdftext = ip.XPdfText(
+        xpdftext = iptext.XPdfText(
             self.utilpath, regexpclass=self.textregex,
             defsectionname=self.defsectionname, headermap=self.headermap,
             allheaders=self.allheaders, log=self.log
         )
-        xpdfhtml = ip.XPdfHtml(
+        xpdfhtml = iphtml.XPdfHtml(
             self.utilpath, defsectionname=self.defsectionname,
             headermap=self.headermap, allheaders=self.allheaders,
             regexpclass=self.htmlregex, log=self.log

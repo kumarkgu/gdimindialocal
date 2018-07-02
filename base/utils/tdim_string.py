@@ -32,23 +32,23 @@ def extract_english(string, asciireg=None):
     return string.strip()
 
 
-def match_string(data, string):
+def match_string(string, matchpat):
     try:
-        assert isinstance(string, Pattern)
-        if string.search(data):
+        assert isinstance(matchpat, Pattern)
+        if matchpat.search(string):
             return True
     except AssertionError:
-        if data == string:
+        if string == matchpat:
             return True
     else:
         return False
 
 
-def match_return_string(data, string, **kwargs):
+def match_return_string(string, matchpat, **kwargs):
     try:
-        assert isinstance(string, Pattern)
+        assert isinstance(matchpat, Pattern)
         posn = kwargs.get('position', None)
-        match = string.search(data)
+        match = matchpat.search(string)
         if match:
             if posn is None:
                 return match.group(0)
@@ -66,8 +66,8 @@ def match_return_string(data, string, **kwargs):
                     pass
                 return matchdict
     except AssertionError:
-        if data == string:
-            return data
+        if string == matchpat:
+            return string
     else:
         return None
 
@@ -82,3 +82,15 @@ def lpad(string, length, char=" "):
 
 def rpad(string, length, char=" "):
     return str(string).ljust(length, char)
+
+
+def extract_string(string, matchpat=None, grpnumber=None):
+    try:
+        assert isinstance(string, Pattern)
+        t_group = grpnumber if grpnumber else 1
+        match = matchpat.search(string)
+        if match:
+            return match.group(t_group)
+    except AssertionError:
+        return string
+    return None
