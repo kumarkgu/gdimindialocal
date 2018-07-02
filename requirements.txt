@@ -30,6 +30,7 @@ pandas==0.20.1
 passlib==1.7.1
 pbr==3.1.1
 pdfminer.six==20170720
+persistent==4.2.4.1
 Pillow==4.1.1
 probableparsing==0.0.1
 protobuf==3.3.0
@@ -76,3 +77,4 @@ win32core==221.36
 win32gui==221.6
 windmill==1.6
 XlsxWriter==1.0.2
+zope.interface==4.5.0
