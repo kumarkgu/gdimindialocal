@@ -17,6 +17,7 @@ class XymaxED(JapanBasePDF):
         self.pivotcolumn = 6
         self.regexppivot = re.compile('[A-Za-z]*[0-9]+[,]*[0-9]*F|^M\d|^\d*-;\d*\d$$', re.ASCII)
         self.runtype = 'lattice'
+        self.addressindex = 2
 
     @staticmethod
     def _set_header(currline, prevline=None):
@@ -79,7 +80,7 @@ class XymaxED(JapanBasePDF):
                        prevline[index] = prevprevline[index]
             return prevline
 
-    def _process_csv(self, infile, outfile):
+    def _process_csv(self, infile, outfile, addressindex):
         w_fileno = open(outfile, 'wt', encoding='utf-8', newline="")
         writer = csv.writer(w_fileno, delimiter=",")
         prevline = None
@@ -102,6 +103,7 @@ class XymaxED(JapanBasePDF):
                         outline = self._set_record(outline, prevline = prevline, prevprevline = prevprevline)
                         #output the combine lines with 共益費 only
                         if outline[0] != "" and len(outline) > 14:
+                            outline[addressindex] = cp.addxform(outline[addressindex])
                             writer.writerow(outline)
                     lineno += 1
                     prevprevline = prevline
@@ -147,4 +149,4 @@ class XymaxED(JapanBasePDF):
             raise
         finally:
             tempfileno.close()
-        self._process_csv(tempout, outfile)
+        self._process_csv(tempout, outfile, self.addressindex)

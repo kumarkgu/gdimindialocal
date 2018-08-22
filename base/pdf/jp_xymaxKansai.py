@@ -17,6 +17,7 @@ class XymaxKansai(JapanBasePDF):
         self.pivotcolumn = 5
         self.regexppivot = re.compile("[A-Za-z]*[0-9]+[,]*[0-9]*F|^\d\d\d$|^満室$|^満車$|^必要な坪数をリクエストください。$|^単独棟$", re.ASCII)
         self.runtype = 'lattice'
+        self.addressindex = 4
 
     @staticmethod
     def _set_header(currline):
@@ -65,8 +66,6 @@ class XymaxKansai(JapanBasePDF):
                 if templine[index] == "即入居可能" and index != 8:
                     for i in range(0, 8 - index):
                         templine.insert(index, "")
-                print(index)
-                print(templine[index])
 
                 if re.search(("^空.*台$|^なし$"), templine[index]) and index != 12:
                     for i in range(0, 12 - index):
@@ -91,7 +90,10 @@ class XymaxKansai(JapanBasePDF):
                 if index in [0,1,2,3,4,12,13]:
                     if templine[index] == "" and prevline[index] != "":
                         templine[index] = prevline[index]
+                        print(index)
+                        print(templine[index])
 
+            print(templine)
 
             if templine[7] == '' and templine[5] not in ("満室","満車","必要な坪数をリクエストください。") :
                 templine[7] = prevline[7]
@@ -105,7 +107,7 @@ class XymaxKansai(JapanBasePDF):
         #即入居可能
 
 
-    def _process_csv(self, infile, outfile):
+    def _process_csv(self, infile, outfile, addressindex):
         w_fileno = open(outfile, 'wt', encoding='utf-8', newline="")
         writer = csv.writer(w_fileno, delimiter=",")
         prevline = None
@@ -124,6 +126,7 @@ class XymaxKansai(JapanBasePDF):
                         prevline = outline
                     elif lineno > 0 and len(outline) > 10 and outline[0] not in ("種類","エリア") and outline[4] != "":
                         outline = self._set_record(outline,prevline)
+                        outline[addressindex] = cp.addxform(outline[addressindex])
                         writer.writerow(outline)
                         prevline = outline
                     lineno += 1
@@ -168,4 +171,4 @@ class XymaxKansai(JapanBasePDF):
             raise
         finally:
             tempfileno.close()
-        self._process_csv(tempout, outfile)
+        self._process_csv(tempout, outfile, self.addressindex)

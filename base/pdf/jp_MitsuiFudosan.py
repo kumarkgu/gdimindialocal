@@ -17,6 +17,7 @@ class MitsuiFudosan(JapanBasePDF):
         self.pivotcolumn = None
         self.regexppivot = None #re.compile("^\([A-Za-z]*[0-9]*[0-9]\)", re.ASCII)
         self.runtype = 'stream'
+        self.addressindex = 2
 
     def _set_header(self, currline, prevline=None, prevprevline=None):
         templine = currline
@@ -32,16 +33,24 @@ class MitsuiFudosan(JapanBasePDF):
                     if index == 0:
                         templine[index] = "ビル名称"
                     elif index == 1:
-                        templine[index] = "転貸方式"
+                        templine[index] = "転貸方式/Feature"
                     elif index == 2:
                         templine[index] = "Address"
                     else:
                         templine[index] = prevline[index] + templine[index]
                 templine.insert(0, "PerfectureName")
                 templine.insert(1, "Location")
-                templine.insert(5, templine[5].split(" ")[1])
+                #split 竣工年月 and 階数
+                templine.insert(6, templine[5].split(" ")[1])
                 templine[5] = templine[5].split(" ")[0]
-                del templine[7] # del empty column between 階数 and 室
+                # del empty column between 階数 and 室
+                del templine[7]
+                #add column for unit
+                templine.insert(8, "Unit")
+                #split 用途 and 契約
+                templine[9] = "用途"
+                templine.insert(10, "契約")
+
                 return templine
         except IndexError:
             pass
@@ -89,6 +98,29 @@ class MitsuiFudosan(JapanBasePDF):
         if self._check_short_line(prevline):
             templine[0] = prevline[0]
             templine[1] = prevline[1]
+        #Tabula read 'ー' as -
+        if '-' in templine[0] and not re.search("[A-Za-z]-[A-Za-z]", templine[0]):
+            templine[0] = templine[0].replace("-","ー")
+        #split "貸主代行" from address
+        if " " in templine[2] and templine[1] == "":
+            templine[1] = templine[2].split(" ")[0]
+            templine[2] = templine[2].split(" ")[1]
+        #split 室 and Unit
+        if " " in templine[5]:
+            templine.insert(6,templine[5].split(" ")[1])
+            templine[5] = templine[5].split(" ")[0]
+        else: templine.insert(6,"")
+        # split 用途	and 契約
+        templine[7] = templine[7].replace(" ", "")
+        if len(templine[7]) == 2:
+            templine.insert(8,templine[7][1])
+            templine[7] = templine[7][0]
+        else: templine.insert(8,"")
+        #split Tel and 備考
+        if len(templine) >= 19 and " " in templine[18].strip():
+            templine.insert(19, templine[18].split(" ")[1])
+            templine[18] = templine[18].split(" ")[0]
+
         # auto fill building name and address
         if not self._check_short_line(templine):
             for index in [0, 2]:
@@ -96,7 +128,7 @@ class MitsuiFudosan(JapanBasePDF):
                     templine[index] = prevline[index]
         return templine
 
-    def _process_csv(self, infile, outfile):
+    def _process_csv(self, infile, outfile, addressindex):
         w_fileno = open(outfile, 'wt', encoding='utf-8', newline="")
         writer = csv.writer(w_fileno, delimiter=",")
         prevline = None
@@ -113,8 +145,10 @@ class MitsuiFudosan(JapanBasePDF):
                         break
                     print('no = '+ str(lineno))
                     if lineno < 3:
+                        print(outline)
                         outline = self._set_header(outline, prevline=prevline, prevprevline = prevprevline)
                     print(outline)
+                    print(prevline)
                     if lineno == 3:
                         writer.writerow(prevline)
                     if lineno > 3:
@@ -131,6 +165,7 @@ class MitsuiFudosan(JapanBasePDF):
                             print(self._check_short_line(outline))
                             outline = self._set_record(outline, prevline)
                             if not self._check_short_line(outline):
+                                outline[addressindex] = cp.addxform(outline[addressindex])
                                 writer.writerow([perfecture, location]+outline)
                     print('perfecture =' + str(perfecture))
                     print('location =' + str(location))
@@ -153,7 +188,6 @@ class MitsuiFudosan(JapanBasePDF):
             basefile
         )
         filelist = self.preprocess_pdf(pdffile=pdffile, html_dir=self.htmldir)
-        print(filelist)
         filecounter = 1
         tempfileno = open(tempout, 'wt', encoding='utf-8', newline="")
         tempwriter = csv.writer(tempfileno, delimiter=",")
@@ -178,7 +212,7 @@ class MitsuiFudosan(JapanBasePDF):
             raise
         finally:
             tempfileno.close()
-        self._process_csv(tempout, outfile)
+        self._process_csv(tempout, outfile, self.addressindex)
 
 # - ビル名称
 # - 竣工

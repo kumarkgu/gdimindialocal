@@ -17,6 +17,7 @@ class NomuraFudosanPartners(JapanBasePDF):
         self.pivotcolumn = None
         self.regexppivot = None #re.compile("^\([A-Za-z]*[0-9]*[0-9]\)", re.ASCII)
         self.runtype = 'lattice'
+        self.addressindex = 4
 
     def _set_header(self, currline, prevline=None):
         templine = currline
@@ -24,21 +25,36 @@ class NomuraFudosanPartners(JapanBasePDF):
             return templine
         try:
             #combine 面 積(m2) and 面 積(坪)
-            prevline.insert(6, prevline[5] +"("+ templine[5]+")")
-            prevline[5] = prevline[5] + "("+ templine[4] + ")"
+            if templine[5] == '坪':
+                prevline.insert(6, prevline[5] +"("+ templine[5]+")")
+                prevline[5] = prevline[5] + "("+ templine[4] + ")"
+            elif templine[6] == '坪':
+                prevline.insert(6, prevline[5] + "(" + templine[6] + ")")
+                prevline[5] = prevline[5] + "(" + templine[5] + ")"
             #split 所在地;交通
             prevline.insert(3, prevline[2].split(";")[1])
             prevline[2] = prevline[2].split(";")[0]
             #Split ビル名;(構造/規模)
             prevline.insert(2,prevline[1].split(";")[1])
             prevline[1] = prevline[1].split(";")[0]
+            #add Unit Comment
+            prevline.insert(3, "UnitComment")
+
+
             for index in range(0, len(prevline)):
                 if index + 1 > len(templine):
                     templine.insert(index,"")
+                #split "担 当 ・ 備 考"
+                if prevline[index] == "担 当 ・ 備 考":
+                    templine[index] = prevline[index].split(" ・ ")[0]
+                    templine.insert(index + 1,  'TEL')
+                    templine.insert(index + 2,  prevline[index].split(" ・ ")[1])
+                    break
                 templine[index] = prevline[index]
             return templine
         except IndexError:
-            pass
+            raise
+            #pass
 
     @staticmethod
     def _set_record( currline, prevline):
@@ -65,13 +81,44 @@ class NomuraFudosanPartners(JapanBasePDF):
         templine.insert(2,";".join(templine[1].split(";")[1:]))
         templine[1] = templine[1].split(";")[0]
 
+        #split Unitcomment
+        if "★" in templine[2]:
+            templine.insert(3, templine[2].split("★")[1])
+            templine[2] = templine[2].split("★")[0]
+        else: templine.insert(3, "")
+
+        # split "担 当 ・ 備 考"
+        if len(templine) >= 19 and "TEL" in templine[18]:
+            templine.insert(19, ";".join(templine[18].split("TEL")[1:]))
+            templine[18] = templine[18].split("TEL")[0]
+        else: templine.insert(19,"")
+
+        if len(templine) >= 19 and ";" in templine[19]:
+            templine.insert(20, ";".join(templine[19].split(";")[1:]))
+            templine[19] = templine[19].split(";")[0]
+        else: templine.insert(20,"")
+
+        #if there is no tel in "担 当 ・ 備 考"
+        if len(templine) >= 19 and ";" in templine[18].rstrip(";"):
+            templine[20] = ";".join(templine[18].split(";")[1:])
+            templine[18] = templine[18].split(";")[0]
+
         #autofile the content
-        for index in [0,1,2,3,4,5,15,16,17]:
-            if prevline[index] != "" and templine[index] == "":
+        for index in [0,1,2,4,5,6,16,17,18,19,20]:
+            if index == 0 and templine[index] != "":
+                break
+            elif index == 1 and templine[index] != "":
+                templine[0] = prevline[0]
+                break
+            elif prevline[index] != "" and templine[index] == "":
+                templine[index] = prevline[index]
+
+        for index in [10,11,12,13]:
+            if templine[index] == "〃":
                 templine[index] = prevline[index]
         return templine
 
-    def _process_csv(self, infile, outfile):
+    def _process_csv(self, infile, outfile, addressindex):
         w_fileno = open(outfile, 'wt', encoding='utf-8', newline="")
         writer = csv.writer(w_fileno, delimiter=",")
         prevline = None
@@ -92,6 +139,7 @@ class NomuraFudosanPartners(JapanBasePDF):
                         continue;
                     if lineno > 1:
                         outline = self._set_record(outline,prevline)
+                        outline[addressindex] = cp.addxform(outline[addressindex])
                         writer.writerow(outline)
                     lineno += 1
                     prevline = outline
@@ -137,7 +185,7 @@ class NomuraFudosanPartners(JapanBasePDF):
             raise
         finally:
             tempfileno.close()
-        self._process_csv(tempout, outfile)
+        self._process_csv(tempout, outfile, self.addressindex)
 
 # - ビル名称
 # - 竣工

@@ -155,8 +155,10 @@ class JapanBasePDF:
             str(topposn),
             str(kwargs.get('left', 2)),
             str(bottomposn),
-            str(kwargs.get('right', 850))
+            str(kwargs.get('right', 1450))
+            #str(kwargs.get('right', 850))
         )
         self._exec_tabula(pdffile=pdffile, outfile=outfile, boundary=xycoord,
                           pageno=pageno,
                           runtype=kwargs.get('runtype', 'lattice'))
+
