@@ -1,4 +1,5 @@
 import os
+import shutil
 import glob
 from base.utils import fileobjects as fo
 from base.utils import Logger as lo
@@ -6,18 +7,18 @@ from base.utils import Logger as lo
 
 class JapanProcess:
     def __init__(self, rawdir, processdir=None, xpdfdir=None, tabuladir=None,
-                 tabulajarfile=None, dqdir=None, auditfile=None, **kwargs):
+                 tabulajarfile=None, auditfile = None, **kwargs):
         self.rawdir = rawdir
         self.processdir = processdir
         self.xpdfdir = xpdfdir
         self.tabuladir = tabuladir
         self.tabulajar = tabulajarfile
-        self.dqdir = dqdir
         self.auditfile = auditfile
         self.processname = kwargs.get('processname', 'japan')
         self.dates = kwargs.get('dates', os.path.basename(rawdir))
         self.tempname = kwargs.get('tempname', "temp/{}".format(self.dates))
         self.outputname = kwargs.get('outname', "output/{}".format(self.dates))
+        self.dqname = kwargs.get('dqtname', "{}/dq".format(self.outputname))
         self.archivename = kwargs.get(
             'archivename', "archive/{}".format(self.dates)
         )
@@ -45,25 +46,38 @@ class JapanProcess:
                 self.processdir, self.tempname
             )
         )
+
         fo.create_dir("{}/{}".format(self.processdir, self.tempname))
         self.log.info(
             "..Creating Output Directory: {}/{}".format(
                 self.processdir, self.outputname
             )
         )
+
+        if os.path.exists("{}/{}".format(self.processdir, self.dqname)):
+            shutil.rmtree("{}/{}".format(self.processdir, self.dqname))
+        fo.create_dir("{}/{}".format(self.processdir, self.dqname))
+        self.log.info(
+            "..Creating dq Directory: {}/{}".format(
+                self.processdir, self.dqname
+            )
+        )
+
         fo.create_dir("{}/{}".format(self.processdir, self.outputname))
         self.log.info(
-            "..Creating Output Directory: {}/{}".format(
+            "..Creating Archive Directory: {}/{}".format(
                 self.processdir, self.archivename
             )
         )
         fo.create_dir("{}/{}".format(self.processdir, self.archivename))
 
+
     def create_object(self, objectname):
         return objectname(
             tabuladir=self.tabuladir, tabulajarfile=self.tabulajar,
             xpdfdir=self.xpdfdir, processdir=self.processdir,
-            tempname=self.tempname, outname=self.outputname
+            tempname=self.tempname, outname=self.outputname,
+            auditfile= self.auditfile,
         )
 
     def process_files(self):
@@ -76,7 +90,7 @@ class JapanProcess:
             keyvalue = 0
             fileprocess = False
             for key, value in self.filetype.items():
-                print(key)
+                #print(key)
                 if basepdf.lower().find(key.lower()) >= 0:
                     keyname = key
                     keyvalue = value
@@ -133,9 +147,6 @@ class JapanProcess:
             else:
                 pass
             if fileprocess:
-                self.log.info("..checking data quality against audit file:" + self.dqdir + self.auditfile)
-
-
                 self.log.info("..Moving File to Archive Directory")
                 fo.move_file(
                     pdffile,

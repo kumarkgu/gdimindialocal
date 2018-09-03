@@ -7,10 +7,11 @@ from base.utils import csv_process as cp
 
 class NomuraFudosanPartners(JapanBasePDF):
     def __init__(self, tabuladir=None, tabulajarfile=None, xpdfdir=None,
-                 processdir=None, tempname="temp", outname="output"):
+                 processdir=None, tempname="temp", outname="output", auditfile = None, dqoutdir = None):
         super(NomuraFudosanPartners, self).__init__(
             xpdfdir=xpdfdir, tabuladir=tabuladir, tabulajarfile=tabulajarfile,
-            processdir=processdir, tempname=tempname, outname=outname
+            processdir=processdir, tempname=tempname, outname=outname,
+            auditfile=auditfile
         )
         self.begin = '面 積'
         self.end = None
@@ -128,11 +129,11 @@ class NomuraFudosanPartners(JapanBasePDF):
                 lineno = 0
                 for line in reader:
                     outline = [field.replace("\n", ";").rstrip() for field in line]
-                    print('no = '+ str(lineno))
-                    print(outline)
+                    #print('no = '+ str(lineno))
                     if lineno < 2:
                         outline = self._set_header(outline, prevline=prevline)
                     if lineno == 1:
+                        #print(outline)
                         writer.writerow(outline)
                     # remove all blank lines from content
                     if outline[4] == "":
@@ -140,6 +141,7 @@ class NomuraFudosanPartners(JapanBasePDF):
                     if lineno > 1:
                         outline = self._set_record(outline,prevline)
                         outline[addressindex] = cp.addxform(outline[addressindex])
+                        #print(outline)
                         writer.writerow(outline)
                     lineno += 1
                     prevline = outline
@@ -158,8 +160,10 @@ class NomuraFudosanPartners(JapanBasePDF):
             self.tempdir,
             basefile
         )
+        dqout = "{}/dq.xlsx".format(
+            self.dqoutdir,
+        )
         filelist = self.preprocess_pdf(pdffile=pdffile, html_dir=self.htmldir)
-        print(filelist)
         filecounter = 1
         tempfileno = open(tempout, 'wt', encoding='utf-8', newline="")
         tempwriter = csv.writer(tempfileno, delimiter=",")
@@ -186,6 +190,7 @@ class NomuraFudosanPartners(JapanBasePDF):
         finally:
             tempfileno.close()
         self._process_csv(tempout, outfile, self.addressindex)
+        self.dq_check(auditfile=self.auditfile, pdffile=pdffile, outfile=outfile, auditout=dqout)
 
 # - ビル名称
 # - 竣工

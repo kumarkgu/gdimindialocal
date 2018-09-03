@@ -4,13 +4,13 @@ from base.pdf.jp_base_process import JapanBasePDF
 from base.utils import fileobjects as fo
 from base.utils import csv_process as cp
 
-
 class MFBMFile(JapanBasePDF):
     def __init__(self, tabuladir=None, tabulajarfile=None, xpdfdir=None,
-                 processdir=None, tempname="temp", outname="output"):
+                 processdir=None, tempname="temp", outname="output", auditfile = None, dqoutdir = None):
         super(MFBMFile, self).__init__(
             xpdfdir=xpdfdir, tabuladir=tabuladir, tabulajarfile=tabulajarfile,
-            processdir=processdir, tempname=tempname, outname=outname
+            processdir=processdir, tempname=tempname, outname=outname,
+            auditfile=auditfile
         )
         self.begin = '賃料 共益費 時間内'
         self.end = None
@@ -44,7 +44,6 @@ class MFBMFile(JapanBasePDF):
         if " " in templine[16]:
             templine.insert(17,templine[16].strip().split(" ")[1])
             templine[16] = templine[16].strip().split(" ")[0]
-        print(templine)
         return templine
 
     @staticmethod
@@ -59,13 +58,11 @@ class MFBMFile(JapanBasePDF):
             if " " in templine[7] and templine[8] == "":
                 templine[8] = templine[7].split(" ")[1]
                 templine[7] = templine[7].split(" ")[0]
-            print(templine)
 
             # TEL 備考 in same cell
             if " " in templine[16]:
                 templine.insert(17, templine[16].split(" ")[1])
                 templine[16] = templine[16].split(" ")[0]
-            print(templine)
 
             #Add ※2区画セット貸し to 備考
             if templine[8] == "" and templine[16] != "":
@@ -145,6 +142,7 @@ class MFBMFile(JapanBasePDF):
         finally:
             w_fileno.close()
 
+
     def process_pdf(self, pdffile):
         basefile = fo.get_base_filename(pdffile)
         outfile = "{}/{}.csv".format(
@@ -154,6 +152,9 @@ class MFBMFile(JapanBasePDF):
         tempout = "{}/{}.csv".format(
             self.tempdir,
             basefile
+        )
+        dqout = "{}/dq.xlsx".format(
+            self.dqoutdir,
         )
         filelist = self.preprocess_pdf(pdffile=pdffile, html_dir=self.htmldir)
         tempfileno = open(tempout, 'wt', encoding='utf-8', newline="")
@@ -180,6 +181,7 @@ class MFBMFile(JapanBasePDF):
         finally:
             tempfileno.close()
         self._process_csv(tempout, outfile)
+        self.dq_check(auditfile=self.auditfile , pdffile= pdffile, outfile= outfile, auditout = dqout)
 
 # # Headers
 # # - Building Name

@@ -6,23 +6,36 @@ from bs4 import BeautifulSoup
 from base.pdf import xpdf as xpdf
 from base.pdf import tabula as tabula
 from base.utils import fileobjects as fo
-
+import numpy as np
+import pandas as pd
+from openpyxl import load_workbook
+from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_string_dtype
+from base.utils import Logger as lo
 
 class JapanBasePDF:
     def __init__(self, xpdfdir=None, tabuladir=None, tabulajarfile=None,
-                 processdir=None, tempname="temp", outname="output"):
+                 processdir=None, tempname="temp", outname="output",
+                 dqname="dq", auditfile = None, **kwargs):
         self.tabdir = tabuladir
         self.tabjarfile = tabulajarfile
         self.xpdfdir = xpdfdir
         self.processdir = processdir
         self.tempdir = "{}/{}".format(processdir, tempname)
         self.outdir = "{}/{}".format(processdir, outname)
+        self.dqoutdir = "{}/{}".format(self.outdir, dqname)
+        self.auditfile = auditfile
         self.htmldir = "{}/html".format(processdir)
         self.regfile = re.compile(r'page(\d+)\.html')
         self.pxreg = re.compile(r'\D*(\d+)px', re.IGNORECASE)
         self.xpdf = xpdf.XpdfPdfProcess(utilpath=xpdfdir)
         self.tabula = tabula.TabulaPDF(tabuladir=tabuladir,
                                        tabulajarfile=tabulajarfile)
+        self.processname = kwargs.get('processname', 'japan')
+        self.log = kwargs.get('log', self._set_logger())
+
+    def _set_logger(self):
+        return lo.Logger(self.processname).getlog()
 
     def _exec_xpdf_pdftohtml(self, pdffile, htmldir):
         self.xpdf.pdf_to_html(pdffile, htmldir=htmldir)
@@ -161,4 +174,243 @@ class JapanBasePDF:
         self._exec_tabula(pdffile=pdffile, outfile=outfile, boundary=xycoord,
                           pageno=pageno,
                           runtype=kwargs.get('runtype', 'lattice'))
+
+    """
+    Code below this line are for DQ check on csv output
+    """
+    @staticmethod
+    def import_audit_sheet(auditfile, pdffile):
+        """
+        :param auditfile: location of the audit file
+        :param pdffile: file name of the PDF file with Path
+        :return: dataframe of the auditfile for the pdffile
+        """
+        basefile = fo.get_base_filename(pdffile)
+        audit = pd.read_excel(auditfile)
+        filename = basefile.split('_')[0]
+        audit = audit[audit["FileName"] == filename]
+        return audit, basefile
+
+    @staticmethod
+    def csv_to_df(csvpath):
+        """
+        :param outfile: location of the output csv file
+        :return: dataframe of the output csv file
+        """
+        header = pd.read_csv(csvpath
+                             ,error_bad_lines=False
+                             ,sep=","
+                             ,index_col=False
+                             ,encoding="utf-8"
+                             ,nrows=0)
+        df = pd.read_csv(csvpath
+                         ,error_bad_lines=False
+                         ,sep=","
+                         ,index_col=False
+                         ,encoding="utf-8"
+                         ,skiprows=1
+                         ,names=header.columns)
+        df.columns = df.columns.str.replace(" ","")
+        return df
+
+    @staticmethod
+    def write_to_excel(outfile, sheetname, df):
+        writer = None
+        if os.path.isfile(outfile):
+            writer = pd.ExcelWriter(outfile, engine='openpyxl')
+            writer.book = load_workbook(outfile)
+            writer.sheets = {ws.title: ws for ws in writer.book.worksheets}
+            if sheetname in writer.book.sheetnames:
+                startrow = writer.book[sheetname].max_row
+                header = None
+            else:
+                startrow = 0
+                header = 1
+            df.to_excel(writer, sheetname, startrow=startrow , header = header, index=False)
+        else:
+            writer = pd.ExcelWriter(outfile, engine='xlsxwriter')
+            df.to_excel(writer, sheet_name=sheetname, index=False)
+        writer.save()
+        return None
+
+    @staticmethod
+    def check_header(audit, basefile, outfiledf):
+        """
+        :param audit: dataframe of the auditfile
+        :param outfiledf: dataframe of the output csv file
+        :return: one row log for the header
+        """
+        _filename = basefile
+        _sourcol = [x.replace(" ", "") for x in list(outfiledf.columns)]
+        _tarcol = [x.replace(" ", "") for x in list(audit["Column"])]
+        _columns = ["FileName", "Missing Column", "Additional Column", "Action"]
+
+        miss = []
+        add = []
+
+        for col in _tarcol:
+            if col not in _sourcol:
+                miss.append(col)
+
+        for col in _sourcol:
+            if col not in _tarcol:
+                add.append(col)
+
+        if miss != [] and add != []:
+            return pd.DataFrame({"FileName":[_filename],
+                                "Missing Column":[",".join(miss)],
+                                "Additional Column": [",".join(add)],
+                                "Action": ["Please ensure no missing column."]},
+                                columns = _columns)
+        else:
+            return None
+
+    @staticmethod
+    def check_col_dtype(sourcol, type):
+        if type == "str":
+            check = is_string_dtype(sourcol)
+        elif type == "float":
+            check = is_numeric_dtype(sourcol)
+        elif type == "int":
+            if sourcol.dtype == np.int64:
+                check = True
+            else:
+                check = False
+        elif "年" in type:
+            check = False
+        else:
+            check = None
+        return check
+
+    @staticmethod
+    def check_row_dtype(value, dtype):
+
+        _value = value
+        if dtype == "float":
+            try:
+                _value = float(value.replace(",",""))
+            except:
+                _value = value
+
+        if dtype == "int":
+            try:
+                _value = int(value)
+            except:
+                _value = value
+
+        if type(_value).__name__ != dtype and _value is not None:
+            badvalue = value
+            reason = "Data Type should be " + dtype + ", but it's now " + type(_value).__name__ + " in the csv file."
+            return badvalue, reason
+        else:
+            return None, None
+
+    @staticmethod
+    def check_row_format(value, dtype):
+        if not re.compile(dtype).match(value) and value is not None:
+            badvalue = value
+            reason = "Data format should be " + dtype + ", but it's " + badvalue + " in the csv file."
+            return badvalue, reason
+        else:
+            return None, None
+
+    @staticmethod
+    def app_to_df(dqContentlog, filename, column, line, badvalue, reason):
+        if not badvalue:
+            return dqContentlog
+        else:
+            if dqContentlog is None:
+                dqContentlog = [[filename, column, line, badvalue, reason]]
+            else:
+                dqContentlog.append([filename, column, line, badvalue, reason])
+            return dqContentlog
+
+    def check_content(self, audit, basefile, outfiledf):
+        """
+        :param audit: dataframe of the auditfile
+        :param outfiledf: dataframe of the output csv file
+        :return: dataframe log for bad values
+        """
+        dqContentlog = None
+        dqContentlogdf = pd.DataFrame()
+        _filename = basefile
+        _columns = ["FileName", "Column", "Line", "BadValue", "Reason"]
+
+        for index, row in audit.iterrows():
+            i = 1
+            _column = row["Column"]
+            _dtype = row["DataType"]
+            _sourcol = outfiledf[_column].dropna()
+
+            _check = self.check_col_dtype(_sourcol, _dtype)
+
+            if not _check:
+                if _dtype in ("str", "float", "int"):
+                    for value in _sourcol:
+                        _badvalue, _reason = self.check_row_dtype(value, _dtype)
+                        dqContentlog = self.app_to_df(dqContentlog, _filename, _column, i, _badvalue, _reason)
+                        i = i + 1
+                if "年" in _dtype:
+                    for value in _sourcol:
+                        _badvalue, _reason = self.check_row_format(value, _dtype)
+                        dqContentlog = self.app_to_df(dqContentlog, _filename, _column, i, _badvalue, _reason)
+                        i = i + 1
+                dqContentlogdf = pd.DataFrame(dqContentlog, columns=_columns)
+
+        return dqContentlogdf
+
+    @staticmethod
+    def check_null(audit, basefile, outfiledf):
+        _filename = basefile
+        _columns = ["FileName", "ColumnName", "NullPercent", "Action"]
+        null_output = pd.DataFrame(columns=_columns)
+        for index, row in audit.iterrows():
+            _column = row["Column"]
+            _nullability = row["Nullability"]
+            _sourcol = outfiledf[_column]
+
+            if _nullability == "Not Null":
+                if _sourcol.replace(" ","").replace("",np.nan).isnull().values.any():
+                    nullpercent = _sourcol.replace(" ","").replace("",np.nan).isnull().sum()/ len(_sourcol)
+                    null_output = null_output.append(pd.DataFrame({"FileName":[_filename],
+                                                                   "ColumnName":[_column],
+                                                                   "NullPercent": [nullpercent],
+                                                                   "Action": ["This column should not be null, please check the csv output."]},
+                                                                  columns = _columns))
+
+        return null_output
+
+    def dq_check(self, auditfile, pdffile, outfile, auditout):
+
+        audit, basefile  = self.import_audit_sheet(auditfile=auditfile, pdffile=pdffile)
+        outfiledf = self.csv_to_df(csvpath = outfile)
+
+        header_output = self.check_header(audit=audit, basefile=basefile, outfiledf=outfiledf)
+
+        if header_output is None:
+            self.log.info(
+                "..[DQ check] - Header check on " + basefile + " is completed - No error."
+            )
+            content_output = self.check_content(audit=audit, basefile=basefile, outfiledf=outfiledf)
+            null_output = self.check_null(audit = audit, basefile = basefile, outfiledf = outfiledf)
+            if content_output is None and null_output is None:
+                self.log.info(
+                    "..[DQ check] - Content check on " + basefile + " is compeleted - No error."
+                )
+            else:
+                self.log.info(
+                    "..[DQ check] - Content check on " + basefile + " is compeleted - With error."
+                )
+                if not content_output.empty:
+                    self.write_to_excel(auditout, "Datatype", content_output)
+                if not null_output.empty:
+                    self.write_to_excel(auditout, "Nullability", null_output)
+            return header_output, content_output
+        else:
+            self.log.info(
+                "..[DQ check] - Header check on" + basefile + " is completed - With Error"
+            )
+            self.write_to_excel(auditout, "Header", header_output)
+            return header_output, None
+
 

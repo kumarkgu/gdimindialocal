@@ -7,10 +7,11 @@ from base.utils import csv_process as cp
 
 class XymaxKansai(JapanBasePDF):
     def __init__(self, tabuladir=None, tabulajarfile=None, xpdfdir=None,
-                 processdir=None, tempname="temp", outname="output"):
+                 processdir=None, tempname="temp", outname="output", auditfile = None, dqoutdir = None):
         super(XymaxKansai, self).__init__(
             xpdfdir=xpdfdir, tabuladir=tabuladir, tabulajarfile=tabulajarfile,
-            processdir=processdir, tempname=tempname, outname=outname
+            processdir=processdir, tempname=tempname, outname=outname,
+            auditfile=auditfile
         )
         self.begin = '種類'
         self.end = None
@@ -90,15 +91,15 @@ class XymaxKansai(JapanBasePDF):
                 if index in [0,1,2,3,4,12,13]:
                     if templine[index] == "" and prevline[index] != "":
                         templine[index] = prevline[index]
-                        print(index)
-                        print(templine[index])
+                        #print(index)
+                        #print(templine[index])
 
-            print(templine)
+            #print(templine)
 
             if templine[7] == '' and templine[5] not in ("満室","満車","必要な坪数をリクエストください。") :
                 templine[7] = prevline[7]
 
-            return templine
+            return templine[:21]
         except IndexError:
             pass
 
@@ -117,9 +118,9 @@ class XymaxKansai(JapanBasePDF):
                 lineno = 0
                 for line in reader:
                     outline = [field.replace("\n", ";").rstrip() for field in line]
-                    print('no = '+ str(lineno))
-                    print(outline)
-                    print(prevline)
+                    #print('no = '+ str(lineno))
+                    #print(outline)
+                    #print(prevline)
                     if lineno < 2 and outline[0] == "種類":
                         outline = self._set_header(outline)
                         writer.writerow(outline)
@@ -144,6 +145,9 @@ class XymaxKansai(JapanBasePDF):
         tempout = "{}/{}.csv".format(
             self.tempdir,
             basefile
+        )
+        dqout = "{}/dq.xlsx".format(
+            self.dqoutdir,
         )
         filelist = self.preprocess_pdf(pdffile=pdffile, html_dir=self.htmldir)
         filecounter = 1
@@ -172,3 +176,4 @@ class XymaxKansai(JapanBasePDF):
         finally:
             tempfileno.close()
         self._process_csv(tempout, outfile, self.addressindex)
+        self.dq_check(auditfile=self.auditfile, pdffile=pdffile, outfile=outfile, auditout=dqout)

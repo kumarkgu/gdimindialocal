@@ -1,8 +1,8 @@
 import os
 from base.pdf.japan import JapanProcess
+from base.pdf.jp_tosql import tosql
 
-
-def run_process(yearmonth):
+def run_process(yearmonth, name):
 
     homedir = "C:/users/{}".format(os.getlogin())
     projectdir = "{}/Documents/JLL/Projects/JapanPdfToText/Files".format(
@@ -12,13 +12,18 @@ def run_process(yearmonth):
     processdir = "{}/process".format(projectdir)
     xpdfdir = "{}/Softwares/xpdf/bin64".format(projectdir)
     tabuladir = "{}/Softwares/Tabula/tabula-java".format(projectdir)
-    dqdir = "{}/dq".format(projectdir)
     tabjarfile = "tabula-1.0.2-jar-with-dependencies.jar"
-    auditfile = "csv_dq.xlsx"
-    oprocess = JapanProcess(rawdir=rawdir, processdir=processdir,
-                            xpdfdir=xpdfdir, tabuladir=tabuladir,
-                            tabulajarfile=tabjarfile, dqdir=dqdir,
-                            auditfile=auditfile)
-    oprocess.process_files()
+    auditfile = "{}/dq/csv_dq.xlsx".format(projectdir)
 
-run_process("201805")
+    if name == "PDF":
+        oprocess = JapanProcess(rawdir=rawdir, processdir=processdir,
+                                xpdfdir=xpdfdir, tabuladir=tabuladir,
+                                tabulajarfile=tabjarfile, auditfile=auditfile, )
+        oprocess.process_files()
+    if name == "Upload":
+        oprocess = tosql(processdir = processdir
+                         ,auditfile = auditfile
+                         ,yearmonth = yearmonth)
+        oprocess.csv_to_sql()
+
+run_process("201805", "Upload")

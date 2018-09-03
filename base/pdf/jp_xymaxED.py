@@ -7,15 +7,16 @@ from base.utils import csv_process as cp
 
 class XymaxED(JapanBasePDF):
     def __init__(self, tabuladir=None, tabulajarfile=None, xpdfdir=None,
-                 processdir=None, tempname="temp", outname="output"):
+                 processdir=None, tempname="temp", outname="output", auditfile = None, dqoutdir = None):
         super(XymaxED, self).__init__(
             xpdfdir=xpdfdir, tabuladir=tabuladir, tabulajarfile=tabulajarfile,
-            processdir=processdir, tempname=tempname, outname=outname
+            processdir=processdir, tempname=tempname, outname=outname,
+            auditfile=auditfile
         )
         self.begin = 'エリア'
         self.end = '凡例'
         self.pivotcolumn = 6
-        self.regexppivot = re.compile('[A-Za-z]*[0-9]+[,]*[0-9]*F|^M\d|^\d*-;\d*\d$$', re.ASCII)
+        self.regexppivot = re.compile('[A-Za-z]*[0-9]+[,]*[0-9]*F|^M\d|^\d*-;\d*\d$', re.ASCII)
         self.runtype = 'lattice'
         self.addressindex = 2
 
@@ -25,7 +26,7 @@ class XymaxED(JapanBasePDF):
         if not prevline:
             return templine
         else:
-            print(prevline)
+            #print(prevline)
             #insert 共益費 into header
             for index in range(0, len(templine)):
                 if templine[index] != "":
@@ -33,7 +34,7 @@ class XymaxED(JapanBasePDF):
             #split header by ";"
             for index in range(1, len(prevline) + 3):
                 if ";" in prevline[index]:
-                    print(prevline[index])
+                    #print(prevline[index])
                     prevline.insert(index + 1, prevline[index].split(";")[1])
                     prevline[index] = prevline[index].split(";")[0]
 
@@ -91,10 +92,10 @@ class XymaxED(JapanBasePDF):
                 lineno = 0
                 for line in reader:
                     outline = [field.replace("\n", ";").rstrip() for field in line]
-                    print('no = '+ str(lineno))
-                    print(outline)
-                    print(prevline)
-                    print(prevprevline)
+                    #print('no = '+ str(lineno))
+                    #print(outline)
+                    #print(prevline)
+                    #print(prevprevline)
                     if lineno < 2:
                         outline = self._set_header(outline, prevline = prevline)
                     if lineno == 1:
@@ -123,6 +124,9 @@ class XymaxED(JapanBasePDF):
             self.tempdir,
             basefile
         )
+        dqout = "{}/dq.xlsx".format(
+            self.dqoutdir,
+        )
         filelist = self.preprocess_pdf(pdffile=pdffile, html_dir=self.htmldir)
         filecounter = 1
         tempfileno = open(tempout, 'wt', encoding='utf-8', newline="")
@@ -150,3 +154,4 @@ class XymaxED(JapanBasePDF):
         finally:
             tempfileno.close()
         self._process_csv(tempout, outfile, self.addressindex)
+        self.dq_check(auditfile=self.auditfile, pdffile=pdffile, outfile=outfile, auditout=dqout)

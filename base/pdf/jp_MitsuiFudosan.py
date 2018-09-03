@@ -7,10 +7,12 @@ from base.utils import csv_process as cp
 
 class MitsuiFudosan(JapanBasePDF):
     def __init__(self, tabuladir=None, tabulajarfile=None, xpdfdir=None,
-                 processdir=None, tempname="temp", outname="output"):
+                 processdir=None, tempname="temp", outname="output",
+                 auditfile = None, dqoutdir = None):
         super(MitsuiFudosan, self).__init__(
             xpdfdir=xpdfdir, tabuladir=tabuladir, tabulajarfile=tabulajarfile,
-            processdir=processdir, tempname=tempname, outname=outname
+            processdir=processdir, tempname=tempname, outname=outname,
+            auditfile = auditfile
         )
         self.begin = '時間'
         self.end = None
@@ -143,17 +145,17 @@ class MitsuiFudosan(JapanBasePDF):
                     outline = [field.replace("\n", ";").rstrip() for field in line]
                     if "営業中物件一覧" in outline or '三井不動産ビルマネジメント株式会社' in outline:
                         break
-                    print('no = '+ str(lineno))
+                    #print('no = '+ str(lineno))
                     if lineno < 3:
-                        print(outline)
+                        #print(outline)
                         outline = self._set_header(outline, prevline=prevline, prevprevline = prevprevline)
-                    print(outline)
-                    print(prevline)
+                    #print(outline)
+                    #print(prevline)
                     if lineno == 3:
                         writer.writerow(prevline)
                     if lineno > 3:
-                        print(self._check_pref_location(outline))
-                        print(self._check_pref_location(prevline))
+                        #print(self._check_pref_location(outline))
+                        #print(self._check_pref_location(prevline))
                         if '合   計' in outline or "".join(outline[0:6]) == "": #remove "合   計" line and page line
                             continue
                         if self._check_pref_location(outline) and self._check_pref_location(prevline):
@@ -162,13 +164,13 @@ class MitsuiFudosan(JapanBasePDF):
                         elif self._check_pref_location(outline) and not self._check_pref_location(prevline):
                             location = outline[0]
                         elif not self._check_pref_location(outline):
-                            print(self._check_short_line(outline))
+                            #print(self._check_short_line(outline))
                             outline = self._set_record(outline, prevline)
                             if not self._check_short_line(outline):
                                 outline[addressindex] = cp.addxform(outline[addressindex])
                                 writer.writerow([perfecture, location]+outline)
-                    print('perfecture =' + str(perfecture))
-                    print('location =' + str(location))
+                    #print('perfecture =' + str(perfecture))
+                    #print('location =' + str(location))
                     lineno += 1
                     prevprevline = prevline
                     prevline = outline
@@ -187,13 +189,16 @@ class MitsuiFudosan(JapanBasePDF):
             self.tempdir,
             basefile
         )
+        dqout = "{}/dq.xlsx".format(
+            self.dqoutdir,
+        )
         filelist = self.preprocess_pdf(pdffile=pdffile, html_dir=self.htmldir)
         filecounter = 1
         tempfileno = open(tempout, 'wt', encoding='utf-8', newline="")
         tempwriter = csv.writer(tempfileno, delimiter=",")
         try:
             for htmlfile in filelist:
-                print(htmlfile)
+                #print(htmlfile)
                 tempfile = "{0}/{1}_temp.csv".format(
                     self.tempdir,
                     fo.get_base_filename(htmlfile)
@@ -213,6 +218,7 @@ class MitsuiFudosan(JapanBasePDF):
         finally:
             tempfileno.close()
         self._process_csv(tempout, outfile, self.addressindex)
+        self.dq_check(auditfile=self.auditfile, pdffile=pdffile, outfile=outfile, auditout=dqout)
 
 # - ビル名称
 # - 竣工
