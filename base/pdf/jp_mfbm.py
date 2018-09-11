@@ -4,18 +4,18 @@ from base.pdf.jp_base_process import JapanBasePDF
 from base.utils import fileobjects as fo
 from base.utils import csv_process as cp
 
-
 class MFBMFile(JapanBasePDF):
     def __init__(self, tabuladir=None, tabulajarfile=None, xpdfdir=None,
-                 processdir=None, tempname="temp", outname="output"):
+                 processdir=None, tempname="temp", outname="output", auditfile = None, dqoutdir = None):
         super(MFBMFile, self).__init__(
             xpdfdir=xpdfdir, tabuladir=tabuladir, tabulajarfile=tabulajarfile,
-            processdir=processdir, tempname=tempname, outname=outname
+            processdir=processdir, tempname=tempname, outname=outname,
+            auditfile=auditfile
         )
         self.begin = '賃料 共益費 時間内'
         self.end = None
-        self.pivotcolumn = 6
-        self.regexppivot = re.compile('[A-Za-z]*[0-9]+[,]*[0-9]*F', re.ASCII)
+        self.pivotcolumn = None
+        self.regexppivot = None
 
     @staticmethod
     def _set_header(currline, prevline=None):
@@ -34,6 +34,16 @@ class MFBMFile(JapanBasePDF):
             pass
         templine.insert(0, "PerfectureName")
         templine.insert(1, "Location")
+
+        #seperate 共益費 時間内 (円/坪) 空調費
+        if templine[14].strip() == "" and "共益費" in templine[13]:
+            templine[14] = "敷金"
+            templine[13] = "共益費 (円/坪)"
+
+        #seperate TEL 備考
+        if " " in templine[16]:
+            templine.insert(17,templine[16].strip().split(" ")[1])
+            templine[16] = templine[16].strip().split(" ")[0]
         return templine
 
     @staticmethod
@@ -44,6 +54,20 @@ class MFBMFile(JapanBasePDF):
         if not prevline:
             return templine
         try:
+            #面積 m2 and  用途 in same cell
+            if " " in templine[7] and templine[8] == "":
+                templine[8] = templine[7].split(" ")[1]
+                templine[7] = templine[7].split(" ")[0]
+
+            # TEL 備考 in same cell
+            if " " in templine[16]:
+                templine.insert(17, templine[16].split(" ")[1])
+                templine[16] = templine[16].split(" ")[0]
+
+            #Add ※2区画セット貸し to 備考
+            if templine[8] == "" and templine[16] != "":
+                templine.insert(17, templine[16])
+
             for index in range(0, len(templine)):
                 if templine[index] == "":
                     templine[index] = prevline[index]
@@ -61,6 +85,7 @@ class MFBMFile(JapanBasePDF):
                 break
         isperflocation = True if counter == 1 else False
         return isperflocation
+
 
     def _process_csv(self, infile, outfile):
         w_fileno = open(outfile, 'wt', encoding='utf-8', newline="")
@@ -90,13 +115,20 @@ class MFBMFile(JapanBasePDF):
                             location = prevname
                         if currname == "":
                             if prevname == "":
-                                writer.writerow(prevline)
+                                #to avoid duplicate line
+                                if len(prevline) == 18 and prevline[17] != prevline[16]:
+                                    writer.writerow(prevline)
+                                elif len(prevline) < 18:
+                                    writer.writerow(prevline)
                                 templine = prevline
                             else:
                                 templine = None
                             outline = self._set_record(outline, templine,
                                                        perfecture=perfecture,
                                                        location=location)
+                            #Add ※2区画セット貸し to 備考
+                            if len(prevline) == 18 and prevline[17] == prevline[16]:
+                                outline.insert(17, prevline[17])
                             # writer.writerow(prevline)
                         else:
                             if prevname == "" and (prevline is not None):
@@ -110,13 +142,23 @@ class MFBMFile(JapanBasePDF):
         finally:
             w_fileno.close()
 
+
     def process_pdf(self, pdffile):
         basefile = fo.get_base_filename(pdffile)
         outfile = "{}/{}.csv".format(
             self.outdir,
             basefile
         )
+        tempout = "{}/{}.csv".format(
+            self.tempdir,
+            basefile
+        )
+        dqout = "{}/dq.xlsx".format(
+            self.dqoutdir,
+        )
         filelist = self.preprocess_pdf(pdffile=pdffile, html_dir=self.htmldir)
+        tempfileno = open(tempout, 'wt', encoding='utf-8', newline="")
+        tempwriter = csv.writer(tempfileno, delimiter=",")
         filecounter = 1
         try:
             for htmlfile in filelist:
@@ -128,10 +170,18 @@ class MFBMFile(JapanBasePDF):
                     pdffile=pdffile, htmlfile=htmlfile, outfile=tempfile,
                     begin=self.begin, end=self.end, runtype='stream'
                 )
-                self._process_csv(tempfile, outfile)
+                cp.arrange_csv(
+                    tempfile, outfile=tempwriter, pivotcol=self.pivotcolumn,
+                    pivotregexp=self.regexppivot, ignorecounter=0,
+                    multipage=True, fileno=filecounter
+                )
                 filecounter += 1
         except Exception:
             raise
+        finally:
+            tempfileno.close()
+        self._process_csv(tempout, outfile)
+        self.dq_check(auditfile=self.auditfile , pdffile= pdffile, outfile= outfile, auditout = dqout)
 
 # # Headers
 # # - Building Name

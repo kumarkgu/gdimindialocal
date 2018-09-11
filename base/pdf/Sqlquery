@@ -1,0 +1,117 @@
+SELECT top 0 * INTO [JPN_IT_3S].[ml_tbl_PDFAvailability] FROM [JPN_IT_3S].[ml_tbl_3SAvailability_Delta]
+SELECT top 0 * INTO [JPN_IT_3S].[ml_tbl_PDFProperty] FROM [JPN_IT_3S].[ml_tbl_3SProperty_Delta]
+SELECT top 0 * INTO [JPN_IT_3S].[ml_tbl_PDFOwner] FROM [JPN_IT_3S].[ml_tbl_3SOwner_Delta]
+create table [JPN_IT_3S].[ml_tbl_PDFContact] (
+[Batch] [datetime] NULL,
+ContactName nvarchar(255) NULL,
+Section nvarchar(255) NULL,
+CompanyName nvarchar(255) NULL,
+Tel nvarchar(255) NULL,
+Role nvarchar(255) NULL,
+RoleDescription nvarchar(255) NULL,
+)
+
+ALter table [JPN_IT_3S].[ml_tbl_PDFContact]
+add ID nvarchar(255)
+
+SELECT * FROM [JPN_IT_3S].[ml_tbl_PDFProperty]
+SELECT * FROM [JPN_IT_3S].[ml_tbl_PDFAvailability]
+SELECT * FROM [JPN_IT_3S].[ml_tbl_PDFOwner]
+SELECT * FROM [JPN_IT_3S].[ml_tbl_PDFContact]
+
+--delete FROM [JPN_IT_3S].[ml_tbl_PDFProperty]
+--delete FROM [JPN_IT_3S].[ml_tbl_PDFAvailability]
+--delete FROM [JPN_IT_3S].[ml_tbl_PDFOwner]
+--delete FROM [JPN_IT_3S].[ml_tbl_PDFContact]
+
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column Area nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column FloorFrom nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column Status nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column DepositTerms nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column MgtFeeUOM nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column RentAskingPerUOM nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column AvailabilityType nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column DepositMonth nvarchar(255)
+
+
+
+
+alter table  [JPN_IT_3S].[ml_tbl_PDFOwner]
+add  BuildingAddress nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFOwner]
+add  PropertyName nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFOwner]
+add  ID nvarchar(255)
+
+SELECT * FROM [JPN_IT_3S].[ml_tbl_PDFOwner]
+
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+add  address nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+add  street nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+add  CompanyName nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+add  Fudosan nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+add  Transportation nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+add  RaiseFloor nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+add  Ward nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+add  ID nvarchar(255)
+
+
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+alter column Floors nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+alter column FloorsBelowGround nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+alter column Prefecture nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+alter column YearBuilt nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+alter column TotalParkingSpace nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+alter column  SeismicResistanceCode nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+alter column [3S_PropertyID] int NULL
+alter table  [JPN_IT_3S].[ml_tbl_PDFProperty]
+alter column AvailableParkingSpace nvarchar(255)
+
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add  UOM nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add  BuildingName nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add  Address nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add  Contact nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add  Tel nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add  Fudosan nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add Company nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add Usage nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add Leaseterm nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add Divisible nvarchar(255)
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+add  ID nvarchar(255)
+
+alter table  [JPN_IT_3S].[ml_tbl_PDFAvailability]
+alter column ACType nvarchar(255)
+
+

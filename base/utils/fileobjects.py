@@ -78,7 +78,6 @@ def get_base_filename(filename):
     filewoext = basefile.rsplit('.', 1)[0]
     return filewoext
 
-
 @checkdir
 def copy_tree_1level(source, destination, log=None):
     allsubdirs = get_subdirectory(source)
