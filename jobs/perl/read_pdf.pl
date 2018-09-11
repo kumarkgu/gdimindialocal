@@ -132,6 +132,15 @@ sub buildingnameend {
     return ($__string, $__regex);
 }
 
+sub testlookahead {
+    my $__regex = qr/(?i)(Name (and|or) Address Of The\s*)(Debtor|Respondent)*[\s\(]*(Mortgagee)*\)*/;
+    my $__string = "Name of the village";
+    # my $__string = "Name And address of the debtor";
+    # my $__string = "Name And Address Of The Debtor (mortgagee)";
+    # my $__string = "Name Or Address Of The Respondent, If The Decree Or Order Of The Court";
+    return ($__string, $__regex);
+}
+
 #sub buildingnameend {
 #    my $__regex = qr/(?i)[^,]*,\s*([^,]*Building)(?!')[s]*,/;
 #    my $__string = qq{
@@ -157,9 +166,12 @@ sub buildingnameend {
 # ($string, $regex) = buildingname();
 # ($string, $regex) = plotnumber();
 # ($string, $regex) = beforecoop();
-($string, $regex) = buildingnameend();
+# ($string, $regex) = buildingnameend();
+($string, $regex) = testlookahead();
 
 # if ($string =~ /[,]\s*([^,]*Park)[,]/i) {
+print "$string\n";
+print "$regex\n";
 if ($string =~ /$regex/i) {
     print "Matched\n";
     print "$1\n";

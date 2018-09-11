@@ -58,7 +58,8 @@ class XPdfText:
                     templist = self.igr.check_section_match(line)
                     if templist:
                         self.igr.set_head_data(
-                            templist[0], templist[1], datadict
+                            templist[0], templist[1], datadict,
+                            additional_clean=True
                         )
                         mainsecflag = 1
                         continue
@@ -80,7 +81,7 @@ class XPdfText:
                     if templist[0]:
                         head = templist[1]
                         data = templist[2]
-                        textposition = templist[3]
+                        textposition = int(templist[3])
         self.igr.set_head_data(
             header=head, value=data, datadict=datadict
         )

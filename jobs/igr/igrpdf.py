@@ -148,7 +148,8 @@ class IgrPdfCommonProcessing:
             if match:
                 for buildpattern in self.regex.buildingname:
                     for builddata in buildpattern.finditer(value):
-                        building.append(builddata.group(2))
+                        # building.append(builddata.group(2))
+                        building.append(builddata.group(1))
                 break
         if len(building) > 0:
             datadict["Building Name"] = ", ".join(building)

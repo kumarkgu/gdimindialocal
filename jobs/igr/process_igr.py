@@ -205,9 +205,11 @@ def run_igr_process(folder=None, file=None):
     currdatetime = datetime.now().strftime("%Y%m%d")
     dataexcel = "{0}/igrdata_{1}.xlsx".format(projpath, currdatetime)
     errorexcel = "{0}/igrdata_err_{1}.xlsx".format(projpath, currdatetime)
+    connname = "DEVELOPMENT_SQL"
+    keymesg = "This is my message"
     oprocess = ProcessIgr(
         processname=processname, log=log, projpath=projpath, utilpath=utilpath,
-        boxpath=boxpath, homepath=homedir
+        boxpath=boxpath, homepath=homedir, conn_name=connname, keymesg=keymesg
     )
     oprocess.process(
         folder=foldername, filename=filename, outfile=dataexcel,

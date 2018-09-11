@@ -1,5 +1,6 @@
 import os
 import shutil
+import glob
 
 
 def checkfile(func):
@@ -92,3 +93,12 @@ def copy_tree_1level(source, destination, log=None):
         except Exception as e:
             print("ERROR: {}".format(str(e)))
             raise
+
+
+def get_file_lists(source, extn=None):
+    filelist = []
+    extension = "*." + extn if extn else "*.*"
+    for filename in glob.glob(source + "/" + extension):
+        filelist.append(filename)
+    return filelist
+
