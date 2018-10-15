@@ -23,8 +23,8 @@ class tosql():
         _DRIVER = "SQL Server"
         _SERVER = "USLILVMGDIM01.DelphiPrd.Am.JonesLangLaSalle.com\INST01"
         _DB = "GDIMRegAPAC"
-        _UID = "EDWAPACUser_RW"
-        _PSW = "EDw@pacRead&write"
+        _UID = ""
+        _PSW = ""
 
         connstr = "DRIVER={};SERVER={};DATABASE={};UID={};PWD={};".format(_DRIVER, _SERVER, _DB, _UID, _PSW)
         connstr = urllib.parse.quote_plus(connstr)
