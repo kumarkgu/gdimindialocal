@@ -4,7 +4,7 @@ from base.utils import base_util as bu
 def add_authorization():
     from base.database.CredentialManager import CredentialManager
     homedir = "C:/users/{}".format(bu.current_user())
-    configdir = "{}/codes/python/gdim/Projects/local/base/database".format(
+    configdir = "{}/repos/gdimindialocal/base/database".format(
         homedir
     )
     configfile = "{}/password.cfg".format(configdir)
@@ -13,12 +13,12 @@ def add_authorization():
             configfile=configfile
         )
         credman.add_credential(
-            sectionname="DEVELOPMENT_SQL",
-            host_name='USVDCVMSQL21.DelphiPrd.Am.JonesLangLaSalle.com\SQL2014',
+            sectionname="BLOSSOM_DATABASE",
+            host_name='gimblossomsql.southcentralus.cloudapp.azure.com',
             passphrase='This is my message',
-            database='GDIMRegApac',
-            user='EDWAPACUser_RW',
-            password='EDw@pacRead&write',
+            database='BlossomUAT',
+            user='blossomadmin',
+            password='B100$0m1234$',
             dbtype='MSSQLServer',
             protocol='Server Authentication'
         )
@@ -29,7 +29,7 @@ def add_authorization():
 def get_authorization():
     from base.database.CredentialManager import CredentialManager
     homedir = "C:/users/{}".format(bu.current_user())
-    configdir = "{}/codes/python/gdim/Projects/local/base/database".format(
+    configdir = "{}/repos/gdimindialocal/base/database".format(
         homedir
     )
     configfile = "{}/password.cfg".format(configdir)
@@ -38,7 +38,7 @@ def get_authorization():
         credman = CredentialManager(
             configfile=configfile
         )
-        config = credman.get_credential(sectionname="DEVELOPMENT_SQL",
+        config = credman.get_credential(sectionname="BLOSSOM_DATABASE",
                                         passphrase=passphrase)
         for key, value in config.items():
             print(
@@ -51,5 +51,5 @@ def get_authorization():
         print(e.message)
 
 
-# add_authorization()
-get_authorization()
+add_authorization()
+# get_authorization()

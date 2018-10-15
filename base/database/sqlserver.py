@@ -2,6 +2,7 @@ import pyodbc
 import pypyodbc
 import os
 import pandas as pd
+import datetime
 try:
     from .BaseConnection import BaseConnection
 except:
@@ -117,3 +118,13 @@ class SQLServer(BaseConnection):
         self.log.info("Executing Query: {}".format(query))
         data = pd.read_sql(query, conn)
         return data
+
+    def sql_to_df_timed(self, query, sectionname, passphrase=None):
+        conn = self.connect(sectionname=sectionname, passphrase=passphrase)
+        query = self._clean_query(query=query)
+        self.log.info("Executing Query: {}".format(query))
+        starttime = datetime.datetime.now()
+        data = pd.read_sql(query, conn)
+        endtime = datetime.datetime.now()
+        deltatime = endtime - starttime
+        return [data, starttime, endtime, deltatime]

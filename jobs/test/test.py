@@ -159,6 +159,26 @@ def test_string_1():
     key = "002:00130"
     print(key.split(":")[1].lstrip("0"))
 
+
+def gdim_column(gdim_type, column=None, prefix='gdim', default=None):
+    """Returns a column value."""
+    column_name = '{}_{}'.format(prefix, gdim_type)
+    column_name = column_name.lower()
+
+    if column is not None:
+        # remove pre-existing prefixed column value
+        match = re.match(r'{}_\w+-(.*)'.format(prefix), column)
+        if match:
+            column = match.groups()[0]
+
+        column_name += '-{}'.format(column)
+    elif default is not None:
+        column_name += '_{}'.format(default)
+    return column_name
+
+
+gdim_column(gdim_type='copy', column='KnownAs')
+
 # vutil = "C:/Users/gunjan.kumar/Softwares/xpdf/bin64"
 # vpdf = "C:/Users/gunjan.kumar/temp/igr/IGR2018_5_9.pdf"
 # vhtml = "C:/Users/gunjan.kumar/temp/igr/html2"
@@ -167,4 +187,4 @@ def test_string_1():
 # test_regexpression()
 # test_string_match()
 # test_lpad()
-test_string_1()
+# test_string_1()
