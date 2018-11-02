@@ -30,6 +30,8 @@ class JapanProcess:
             "MFBM": 0,
             "MitsuiFudosan": 0,
             "NoumuraFudongsanPartner": 0,
+            "Apple":0,
+            "CRE":0,
         }
         self.log = kwargs.get('log', self._set_logger())
 
@@ -143,6 +145,20 @@ class JapanProcess:
                     o_NomuraFudosanPartners = self.create_object(NomuraFudosanPartners)
                     self.filetype["NomuraFudosanPartners"] = 1
                 o_NomuraFudosanPartners.process_pdf(pdffile= pdffile, skippage = 2)
+                fileprocess = True
+            elif keyname in ('Apple'):
+                if keyvalue == 0:
+                    from base.pdf.jp_apple import Apple
+                    o_Apple = self.create_object(Apple)
+                    self.filetype["Apple"] = 1
+                o_Apple.process_pdf(pdffile= pdffile)
+                fileprocess = True
+            elif keyname in ('CRE'):
+                if keyvalue == 0:
+                    from base.pdf.jp_cre import CRE
+                    o_CRE = self.create_object(CRE)
+                    self.filetype["CRE"] = 1
+                o_CRE.process_pdf(pdffile= pdffile)
                 fileprocess = True
             else:
                 pass
