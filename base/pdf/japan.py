@@ -32,6 +32,7 @@ class JapanProcess:
             "NoumuraFudongsanPartner": 0,
             "Apple":0,
             "CRE":0,
+            "PureJapan":0,
         }
         self.log = kwargs.get('log', self._set_logger())
 
@@ -159,6 +160,13 @@ class JapanProcess:
                     o_CRE = self.create_object(CRE)
                     self.filetype["CRE"] = 1
                 o_CRE.process_pdf(pdffile= pdffile)
+                fileprocess = True
+            elif keyname in ('PureJapan'):
+                if keyvalue == 0:
+                    from base.pdf.jp_PureJapan import PureJapan
+                    o_PureJapan = self.create_object(PureJapan)
+                    self.filetype["PureJapan"] = 1
+                o_PureJapan.process_pdf(pdffile=pdffile)
                 fileprocess = True
             else:
                 pass

@@ -43,7 +43,6 @@ class Apple(JapanBasePDF):
         try:
             with open(infile, 'rt', encoding='utf-8') as r_fileno:
                 reader = csv.reader(r_fileno, dialect='excel')
-                lineno = 0
                 currline = None
                 for line in reader:
                     outline = [field.replace("\n", ";").rstrip() for field in line]
