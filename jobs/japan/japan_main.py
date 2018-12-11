@@ -26,4 +26,6 @@ def run_process(yearmonth, name):
                          ,yearmonth = yearmonth)
         oprocess.csv_to_sql()
 
-run_process("201805", "Upload")
+#Second Parameter as "PDF" - If you want to convert PDF to Structure CSV files
+#Second Parameter as "Upload" - If you want to upload the structure CSV to Sql Server
+run_process("201812", "PDF")

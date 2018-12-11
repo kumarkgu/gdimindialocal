@@ -58,6 +58,9 @@ class PureJapan(JapanBasePDF):
                             outline.insert(10, split[1])
                             outline[9] =  split[0]
                             outline[9] = split[0]
+                            #overwrite the header names for 賃料坪単価(税別) and 共益費坪単価(税別)
+                            outline[6] = '賃料' + outline[6]
+                            outline[8] = '共益費' + outline[8]
 
                         writer.writerow(outline)
                     lineno += 1
