@@ -268,7 +268,9 @@ class JapanBasePDF:
     @staticmethod
     def check_col_dtype(sourcol, type):
         if type == "str":
-            check = is_string_dtype(sourcol)
+            if sourcol.dtype == np.int64:
+                check = True
+            else: check = is_string_dtype(sourcol)
         elif type == "float":
             check = is_numeric_dtype(sourcol)
         elif type == "int":
@@ -384,7 +386,6 @@ class JapanBasePDF:
 
         audit, basefile  = self.import_audit_sheet(auditfile=auditfile, pdffile=pdffile)
         outfiledf = self.csv_to_df(csvpath = outfile)
-
         header_output = self.check_header(audit=audit, basefile=basefile, outfiledf=outfiledf)
 
         if header_output is None:
