@@ -177,7 +177,78 @@ def gdim_column(gdim_type, column=None, prefix='gdim', default=None):
     return column_name
 
 
-gdim_column(gdim_type='copy', column='KnownAs')
+def test_regex_mrms(string=None):
+    reg = re.compile(r'^\s*M[rs]\.?\s+.*', re.IGNORECASE)
+    if reg.search(string):
+        print("Pattern Match. True. String: {}".format(string))
+    else:
+        print("ERROR: Pattern Does not match. String: {}".format(string))
+
+
+def test_regex_mr_s(string=None):
+    # reg = re.compile(r'^\s*Mr[s]?\.?\s+.*', re.IGNORECASE)
+    reg = re.compile(r'^\s*Mr[s]?\.?\s+.*', re.IGNORECASE)
+    if reg.search(string):
+        print("Pattern Match. True. String: {}".format(string))
+    else:
+        print("ERROR: Pattern Does not match. String: {}".format(string))
+
+
+def test_regex_test(string=None):
+    reg = re.compile(r'(?i)^(.*\s+TEST|TEST\s+.*|\s*TEST\s*)$')
+    if reg.search(string):
+        print("Pattern Match. True. String: {}".format(string))
+    else:
+        print("ERROR: Pattern Does not match. String: {}".format(string))
+
+
+def test_regex_http(string=None):
+    reg = re.compile(r'(?i)(.*http[s]?:\/\/.*)')
+    if reg.search(string):
+        print("Pattern Match. True. String: {}".format(string))
+    else:
+        print("ERROR: Pattern Does not match. String: {}".format(string))
+
+
+def check_tilda_operator(string):
+    if ~string.isnull():
+        print("String is Not Null")
+    else:
+        print("String is null")
+
+
+# heck_tilda_operator()
+# check_tilda_operator()
+
+
+test_regex_http('https://kemplaw.com.au/')
+# test_regex_http('http://kemplaw.com.au/')
+# test_regex_http('HTTPS://KEMPLAW.COM.AU.CASES/')
+# test_regex_http('HTTP://kemplaw.com.au.CASE/')
+# test_regex_test('R7 Test')
+
+# test_regex_test('ITS Testing Services (M) Sdn Bhd')
+# test_regex_test('Secret Company A (TEST) Secret Company A (TEST) Secret Company A (TEST) Secret Company A (TEST)')
+# test_regex_test('Tescom Software Systems Testing Pte Ltd')
+# test_regex_test('CRM Support Test Record for SSO CV')
+# test_regex_test('ITS Testing Services (M) Sdn Bhd')
+# test_regex_test('Test CHM Account')
+# test_regex_test('Test')
+# test_regex_test('CRM Support Test Record for SSO CV')
+
+# gdim_column(gdim_type='copy', column='KnownAs')
+
+# test_regex_mrms("My Name is Gunjan")
+# test_regex_mrms("Mr Name is Kumar")
+# test_regex_mrms("Mr. Name is Dot")
+# test_regex_mrms("Ms Name is Miss")
+# test_regex_mrms("Mr. Name is Miss Dot")
+
+# test_regex_mr_s("Mr Name is Gunjan")
+# test_regex_mr_s("Mr. Name is later dot")
+# test_regex_mr_s("Mrs Name is Misses")
+# test_regex_mr_s("Mrs. Name is dot after misses")
+
 
 # vutil = "C:/Users/gunjan.kumar/Softwares/xpdf/bin64"
 # vpdf = "C:/Users/gunjan.kumar/temp/igr/IGR2018_5_9.pdf"

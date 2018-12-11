@@ -1,5 +1,7 @@
 import sys
 import os
+import functools
+
 try:
     import pwd
 except ImportError:
@@ -43,3 +45,39 @@ def delete_dict_keys(dictname, deletekeys=None):
     except Exception:
         pass
     return dictname
+
+
+def rgetattr(obj, attr, *args):
+    def _getattr(obj, attr):
+        return getattr(obj, attr, *args)
+    return functools.reduce(_getattr, [obj] + attr.split('.'))
+
+
+def rsetattr(obj, attr, val):
+    pre, _, post = attr.rpartition('.')
+    return setattr(rgetattr(obj, pre) if pre else obj, post, val)
+
+
+def get_rattr(obj, schema):
+    attrlist = {}
+    singleval = ["scalar", "value", "string", "number"]
+    try:
+        for key, value in schema.items():
+            if value["Type"].lower() in singleval:
+                attrlist[key] = rgetattr(obj, value["Attribute"])
+            else:
+                listdetail = []
+                for items in rgetattr(obj, value["Attribute"]):
+                    listdetail.append(get_rattr(items, value["Subattribute"]))
+                attrlist[key] = listdetail
+        return attrlist
+    except AttributeError as aerr:
+        print(aerr)
+
+
+def repeat_string(string, repeat=1, until=True):
+    _repeat = 1 if repeat > 0 else 0
+    if until:
+        return (string * (repeat // len(string) + _repeat))[:repeat]
+    else:
+        return string * repeat
