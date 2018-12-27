@@ -21,17 +21,14 @@ from base.utils import Logger as lo
 #      "dq"
 # )
 
-class csv_dq():
 
+class csv_dq():
     def __init__(self, **kwargs):
         self.pdffile = None
         self.auditfile = None
         self.outfile = None
         self.processname = kwargs.get('processname', 'japan')
         self.log = kwargs.get('log', self._set_logger())
-
-
-
 
     @staticmethod
     def import_audit_sheet(auditfile, pdffile):

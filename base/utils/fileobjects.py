@@ -44,12 +44,19 @@ def get_files(dirname, full=False):
             if os.path.isfile(os.path.join(dirname, name))]
 
 
-def copy_file(sourcefile, destination):
+def copy_file(sourcefile, destination, isdstfile=False):
     try:
-        shutil.copy2(sourcefile, destination)
+        if not isdstfile:
+            shutil.copy2(sourcefile, destination)
+        else:
+            shutil.copyfile(sourcefile, destination)
     except FileNotFoundError:
-        create_dir(destination)
-        shutil.copy2(sourcefile, destination)
+        if not isdstfile:
+            create_dir(destination)
+            shutil.copy2(sourcefile, destination)
+        else:
+            create_dir(os.path.dirname(destination))
+            shutil.copyfile(sourcefile, destination)
 
 
 def move_file(sourcefile, destination):

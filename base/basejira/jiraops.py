@@ -18,10 +18,30 @@ class JiraBase:
             "Attribute": "fields.issuetype.name",
             "Type": "Scalar"
         },
+        "IssueStatus": {
+            "Attribute": "fields.status",
+            "Type": "Scalar"
+        },
+        "IssueAssignee": {
+            "Attribute": "fields.assignee",
+            "Type": "Scalar"
+        },
+        "IssueCreated": {
+            "Attribute": "fields.created",
+            "Type": "Scalar"
+        },
+        "IssueUpdated": {
+            "Attribute": "fields.updated",
+            "Type": "Scalar"
+        },
         "Worklog": {
             "Attribute": "fields.worklog.worklogs",
             "Type": "List",
             "Subattribute": {
+                "Id": {
+                    "Attribute": "id",
+                    "Type": "Scalar"
+                },
                 "Name": {
                     "Attribute": "author.name",
                     "Type": "Scalar"
@@ -36,6 +56,10 @@ class JiraBase:
                 },
                 "TimeSpentSecond": {
                     "Attribute": "timeSpentSeconds",
+                    "Type": "Scalar"
+                },
+                "UpdateTime": {
+                    "Attribute": "updated",
                     "Type": "Scalar"
                 }
             }
@@ -116,6 +140,12 @@ class JiraBase:
         oconn = jiraconn if jiraconn else self.connect()
         page_size = 50
         totalissue = self.get_max_issues(oconn, query, log=self.log)
+        if totalissue <= 0:
+            if self.log:
+                self.log.info("ERROR: Exiting")
+            else:
+                print("ERROR: Exiting")
+            return None
         self.log.info("Total Number of Issues: {}".format(str(totalissue)))
         keylists = []
         if totalissue > 0:
@@ -151,6 +181,8 @@ class JiraBase:
     def get_all_issues(self, query, limit=None):
         oconn = self.connect()
         issuekey = self.get_all_issues_key(query, oconn)
+        if issuekey is None:
+            return None
         issues = []
         self.log.info("Getting Issue Details")
         if limit is None:

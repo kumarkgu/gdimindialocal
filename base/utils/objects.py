@@ -24,3 +24,12 @@ def return_type(string):
         return "Pattern"
     else:
         return "String"
+
+
+def return_list(userobject):
+    try:
+        assert isinstance(userobject, list)
+        return userobject
+    except AssertionError:
+        return [userobject]
+
