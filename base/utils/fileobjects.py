@@ -108,3 +108,7 @@ def get_file_lists(source, extn=None):
         filelist.append(filename)
     return filelist
 
+
+def make_base_dir(filename, exists_ok=True):
+    dirname = os.path.basename(filename)
+    create_dir(dirname=dirname)

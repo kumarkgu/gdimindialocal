@@ -137,6 +137,7 @@ def process_maha_rera(website, division=_MAHA_DIV_DIST,  sleeptime=None,
         log.info("Closing Browser and exiting")
         __obrsrobj.close_broswer()
 
+
 if __name__ == '__main__':
     vwebsite = _WEB_SITE
     process_maha_rera(vwebsite)

@@ -6,7 +6,7 @@ class ImageCV2Err(BaseImageErr):
     def __init__(self, message, errno=-16001):
         self.message = message
         self.errono = errno
-        super(ImageFileNotReadErr, self).__init__(message, errno)
+        super(ImageCV2Err, self).__init__(message, errno)
 
 
 class ImageFileNotReadErr(BaseImageErr):

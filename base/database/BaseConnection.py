@@ -3,7 +3,7 @@ from base.utils import base_util as bu
 from base.utils.Logger import Logger
 try:
     from .CredentialManager import CredentialManager
-except:
+except ImportError:
     from base.database.CredentialManager import CredentialManager
 # from . import CredentialManager as cm
 

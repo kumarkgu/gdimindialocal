@@ -3,7 +3,7 @@ import os
 from pymongo import MongoClient
 try:
     from .BaseConnection import BaseConnection
-except:
+except ImportError:
     from base.database.BaseConnection import BaseConnection
 # from . import BaseConnection as bc
 

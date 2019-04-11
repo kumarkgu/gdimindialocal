@@ -5,7 +5,7 @@ from base.utils import base_util as bu
 from base.utils import objects as ob
 try:
     from .UserAuthorization import UserAuthorization
-except:
+except ImportError:
     from base.database.UserAuthorization import UserAuthorization
 # from . import UserAuthorization as ua
 

@@ -5,7 +5,7 @@ import pandas as pd
 import datetime
 try:
     from .BaseConnection import BaseConnection
-except:
+except ImportError:
     from base.database.BaseConnection import BaseConnection
 
 

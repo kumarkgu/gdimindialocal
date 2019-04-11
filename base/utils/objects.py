@@ -13,7 +13,7 @@ def isint(string):
     try:
         assert isinstance(string, int)
         return True
-    except:
+    except AssertionError:
         return False
 
 
