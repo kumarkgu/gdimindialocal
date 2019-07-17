@@ -1,6 +1,6 @@
 import re
-from base.database.sqlserver import SQLServer
-from base.utils.Logger import Logger
+from baselib.database.sqlserver import SQLServer
+from baselib.utils.Logger import Logger
 
 
 class IGRExpressions:

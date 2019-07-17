@@ -1,8 +1,8 @@
-from base.basejira import jiraops as jo
-from base.utils.Logger import Logger
-from base.utils import fileobjects as fo
-from base.utils import base_util as bu
-from base.dataops import dfopers as do
+from baselib.basejira import jiraops as jo
+from baselib.utils.Logger import Logger
+from baselib.utils import fileobjects as fo
+from baselib.utils import base_util as bu
+from baselib.dataops import dfopers as do
 import pandas as pd
 import datetime
 import configparser
@@ -130,7 +130,7 @@ class JiraOperations:
         return [df, dedupdf]
 
     def write_to_excel(self, excel=None, sheetdf=None):
-        from base.dataops import dftoexcel as dte
+        from baselib.dataops import dftoexcel as dte
         output = self.outputfile if excel is None else excel
         excelwrite = dte.DFtoExcel(close=True)
         excelwrite.write_to_excel(filename=output, sheets=sheetdf)
@@ -138,7 +138,7 @@ class JiraOperations:
         # excelwrite.write_df_to_excel_new(sheetdf=sheetdf, filename=output)
 
     def write_to_csv(self, csvfile=None, sheetdf=None):
-        from base.dataops import dftocsv as dfcs
+        from baselib.dataops import dftocsv as dfcs
         csv = self.csvfile if csvfile is None else csvfile
         basecsv = "{}.csv".format("_".join(csv.split("_")[:-1]))
         csvwrite = dfcs.DFToCSV()
@@ -170,8 +170,8 @@ def run_jira(limit=None, removecol=None):
 
 
 def test_jira():
-    from base.dataops import dftoexcel as dfte
-    from base.dataops import dftocsv as dfcs
+    from baselib.dataops import dftoexcel as dfte
+    from baselib.dataops import dftocsv as dfcs
     prjname = "Red"
     basedr = "C:/Users/gunjan.kumar/Documents"
     basedr = "{0}/JLL/CoE/{1}/Reports".format(basedr, prjname.upper())

@@ -1,6 +1,6 @@
-from base.utils import tdim_string as ts
-from base.utils import fileobjects as fo
-from base.pdf import xpdf as xpdf
+from baselib.utils import tdim_string as ts
+from baselib.utils import fileobjects as fo
+from baselib.pdf import xpdf as xpdf
 import os
 
 

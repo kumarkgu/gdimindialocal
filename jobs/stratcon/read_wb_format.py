@@ -2,8 +2,8 @@ from docx import Document
 import unicodedata as ud
 import glob
 import re
-from base.utils.SQLConnection import MSSqlConnection
-from base.utils.Logger import Logger
+from baselib.utils.SQLConnection import MSSqlConnection
+from baselib.utils.Logger import Logger
 # from docx.text import run
 # from functools import reduce
 

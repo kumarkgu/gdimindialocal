@@ -1,8 +1,8 @@
 import csv
 import time
-from base.utils import base_util as bu
-from base.websuite import setbrowser as sb
-from base.utils.Logger import Logger
+from baselib.utils import base_util as bu
+from baselib.websuite import setbrowser as sb
+from baselib.utils.Logger import Logger
 
 
 _PATH_SEP = bu.get_path_separator()

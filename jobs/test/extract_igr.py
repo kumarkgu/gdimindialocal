@@ -3,11 +3,11 @@ import re
 import shutil
 from typing import Pattern
 
-from base.pdf import xpdf as pdf
-from base.utils import Logger as lo
-from base.utils import base_util as bu
-from base.utils import excelprocess as ep
-from base.utils import fileobjects as fo
+from baselib.pdf import xpdf as pdf
+from baselib.utils import Logger as lo
+from baselib.utils import base_util as bu
+from baselib.utils import excelprocess as ep
+from baselib.utils import fileobjects as fo
 
 
 # "/Documents/JLL/Projects/Research/IGR/process"
@@ -489,18 +489,18 @@ oigr.wrap_process_files(outputfile=voutputfile, errorfile=verrorfile)
 
 
 
-# from base.utils import mailops as mo
+# from baselib.utils import mailops as mo
 # import re
-from base.utils import Logger as lo
-from base.utils import base_util as bu
-from base.websuite import setbrowser as sb
-from base.image import imagetxt as it
+from baselib.utils import Logger as lo
+from baselib.utils import base_util as bu
+from baselib.websuite import setbrowser as sb
+from baselib.image import imagetxt as it
 # from selenium.common.exceptions import NoSuchElementException
 # from PIL import Image
 # from io import BytesIO
 # import base64
-# from base.image.imagetxt import ReadImage
-# from base.image import imageprocess as ip
+# from baselib.image.imagetxt import ReadImage
+# from baselib.image import imageprocess as ip
 
 # log = lo.Logger("Research IGR Data").getlog()
 #

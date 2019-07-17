@@ -1,10 +1,10 @@
-from base.utils import base_util as bu
+from baselib.utils import base_util as bu
 
 
 def add_authorization():
-    from base.database.CredentialManager import CredentialManager
+    from baselib.database.CredentialManager import CredentialManager
     homedir = "C:/users/{}".format(bu.current_user())
-    configdir = "{}/repos/gdimindialocal/base/database".format(
+    configdir = "{}/repos/gdimindialocal/baselib/database".format(
         homedir
     )
     configfile = "{}/password.cfg".format(configdir)
@@ -27,9 +27,9 @@ def add_authorization():
 
 
 def get_authorization():
-    from base.database.CredentialManager import CredentialManager
+    from baselib.database.CredentialManager import CredentialManager
     homedir = "C:/users/{}".format(bu.current_user())
-    configdir = "{}/repos/gdimindialocal/base/database".format(
+    configdir = "{}/repos/gdimindialocal/baselib/database".format(
         homedir
     )
     configfile = "{}/password.cfg".format(configdir)

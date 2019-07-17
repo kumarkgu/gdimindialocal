@@ -1,5 +1,5 @@
 import re
-from base.utils.Logger import Logger
+from baselib.utils.Logger import Logger
 
 vline = "(13) Registration Fee as per 1000"
 # # __ore = re.compile(r'(^\s+Name.*Village\s*)(:)(\s*\S+.*\s*)$',
@@ -103,7 +103,7 @@ def index_of_list(key, mylist):
 
 
 def test(string):
-    from base.utils import tdim_string as ts
+    from baselib.utils import tdim_string as ts
     value = ts.translate_english(string)
     print(value)
 
@@ -111,7 +111,7 @@ def test(string):
 
 
 def test_suppress_error(utilpath=None, pdffile=None, htmldir=None):
-    from base.pdf import xpdf
+    from baselib.pdf import xpdf
     __oxpdf = xpdf.XpdfPdfProcess(utilpath=utilpath)
     # __vboolean = __oxpdf.is_unreadable_pdf(pdffile)
     # print(__vboolean)
@@ -132,7 +132,7 @@ def test_regexpression():
 
 
 def test_string_match():
-    from base.utils import tdim_string as ts
+    from baselib.utils import tdim_string as ts
     strpattern = re.compile(r'(\s*\(*Village\s*Name\)*\s*)(:)(\s*\S+.*\s*)')
     # strpattern = re.compile(r'^\s*\(*(Village\s*Name)\)*\s*:\s*')
     # strpattern = "Village Name: Gunjan Kumar"
@@ -149,7 +149,7 @@ def test_string_match():
 
 
 def test_lpad():
-    from base.utils import tdim_string as ts
+    from baselib.utils import tdim_string as ts
     string = 555555555
     string = ts.lpad(string, 5, "0")
     print(string)

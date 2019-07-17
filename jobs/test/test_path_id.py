@@ -1,8 +1,8 @@
 import os
 import glob
 import re
-from base.utils import Logger as lo
-from base.utils import fileobjects as fo
+from baselib.utils import Logger as lo
+from baselib.utils import fileobjects as fo
 
 log = lo.Logger("Image").getlog()
 

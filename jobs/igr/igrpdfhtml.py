@@ -3,9 +3,9 @@ import glob
 import os
 from bs4 import BeautifulSoup
 from jobs.igr.igrpdf import IgrPdfCommonProcessing
-from base.utils import tdim_string as ts
-from base.utils import fileobjects as fo
-from base.pdf import xpdf
+from baselib.utils import tdim_string as ts
+from baselib.utils import fileobjects as fo
+from baselib.pdf import xpdf
 
 
 class XPdfHtml:

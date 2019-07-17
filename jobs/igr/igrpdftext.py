@@ -1,7 +1,7 @@
 import os
 from jobs.igr.igrpdf import IgrPdfCommonProcessing
-from base.utils import fileobjects as fo
-from base.pdf import xpdf
+from baselib.utils import fileobjects as fo
+from baselib.pdf import xpdf
 
 
 class XPdfText:

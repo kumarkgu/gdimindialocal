@@ -1,6 +1,6 @@
-from base.utils import base_util as bu
+from baselib.utils import base_util as bu
 from tabula import convert_into
-from base.image.imagetxt import ReadImage
+from baselib.image.imagetxt import ReadImage
 
 # from tabula import wrapper
 # import json
@@ -52,7 +52,7 @@ vpath = "{0}/rawfiles/{1}".format(vproject, vfolder)
 vname = "IGR2018_225_718"
 #
 #
-# from base.image import imagetxt as it
+# from baselib.image import imagetxt as it
 #
 # vpath = "C:/Users/gunjan.kumar/Documents/JLL/Projects/Research/IGR/process"
 # vname = "bak_errorfiles-000001"
