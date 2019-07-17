@@ -1,11 +1,7 @@
 import re
 import os
 from pymongo import MongoClient
-try:
-    from .BaseConnection import BaseConnection
-except ImportError:
-    from baselib.database.BaseConnection import BaseConnection
-# from . import BaseConnection as bc
+from .baseconnection import BaseConnection
 
 
 class MongoDBConn(BaseConnection):

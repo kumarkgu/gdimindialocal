@@ -1,6 +1,6 @@
 import os
 from baselib.utils import base_util as bu
-from baselib.utils import security as sec
+from . import security as sec
 
 
 class UserAuthorization:
@@ -29,8 +29,7 @@ class UserAuthorization:
                     if section.upper() != section.upper():
                         continue
                     else:
-                        userlist.append(
-                            line[line.find("=") + 1:].lstrip())
+                        userlist.append(line[line.find("=") + 1:].lstrip())
         except FileNotFoundError:
             pass
         return userlist
@@ -46,7 +45,7 @@ class UserAuthorization:
                     filenum.write(
                         "{}={}{}".format(
                             section,
-                            sec.encrypt_password(line.upper),
+                            sec.encrypt_password(line.upper()),
                             os.linesep
                         )
                     )

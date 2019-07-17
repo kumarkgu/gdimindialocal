@@ -103,7 +103,7 @@ def index_of_list(key, mylist):
 
 
 def test(string):
-    from baselib.utils import tdim_string as ts
+    from baselib.utils import stringops as ts
     value = ts.translate_english(string)
     print(value)
 
@@ -132,7 +132,7 @@ def test_regexpression():
 
 
 def test_string_match():
-    from baselib.utils import tdim_string as ts
+    from baselib.utils import stringops as ts
     strpattern = re.compile(r'(\s*\(*Village\s*Name\)*\s*)(:)(\s*\S+.*\s*)')
     # strpattern = re.compile(r'^\s*\(*(Village\s*Name)\)*\s*:\s*')
     # strpattern = "Village Name: Gunjan Kumar"
@@ -149,7 +149,7 @@ def test_string_match():
 
 
 def test_lpad():
-    from baselib.utils import tdim_string as ts
+    from baselib.utils import stringops as ts
     string = 555555555
     string = ts.lpad(string, 5, "0")
     print(string)

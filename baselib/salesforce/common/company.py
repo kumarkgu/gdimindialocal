@@ -1,5 +1,5 @@
 import re
-from baselib.utils import tdim_string as ts
+from baselib.utils import stringops as ts
 
 
 class Company:

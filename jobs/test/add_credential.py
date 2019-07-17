@@ -2,12 +2,12 @@ from baselib.utils import base_util as bu
 
 
 def add_authorization():
-    from baselib.database.CredentialManager import CredentialManager
+    from baselib.security.credentialmanager import CredentialManager
     homedir = "C:/users/{}".format(bu.current_user())
     configdir = "{}/repos/gdimindialocal/baselib/database".format(
         homedir
     )
-    configfile = "{}/password.cfg".format(configdir)
+    configfile = "{}/credentials.cfg".format(configdir)
     try:
         credman = CredentialManager(
             configfile=configfile
@@ -27,12 +27,12 @@ def add_authorization():
 
 
 def get_authorization():
-    from baselib.database.CredentialManager import CredentialManager
+    from baselib.security.credentialmanager import CredentialManager
     homedir = "C:/users/{}".format(bu.current_user())
     configdir = "{}/repos/gdimindialocal/baselib/database".format(
         homedir
     )
-    configfile = "{}/password.cfg".format(configdir)
+    configfile = "{}/credentials.cfg".format(configdir)
     passphrase = 'This is my message'
     try:
         credman = CredentialManager(

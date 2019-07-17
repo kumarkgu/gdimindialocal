@@ -33,3 +33,27 @@ def return_list(userobject):
     except AssertionError:
         return [userobject]
 
+
+def change_case(titem, ccase="Lower"):
+    def _ccase(string, ccase="Lower"):
+        if ccase.lower() == "lower":
+            return string.lower().strip()
+        else:
+            return string.upper().strip()
+
+    try:
+        assert isinstance(titem, dict)
+        ctype = "dict"
+    except AssertionError:
+        try:
+            assert isinstance(titem, list)
+            ctype = "list"
+        except AssertionError:
+            ctype = "string"
+    if ctype == "dict":
+        tobj = {_ccase(k, ccase): v for k, v in titem.items()}
+    elif ctype == "list":
+        tobj = [_ccase(x, ccase) for x in titem]
+    else:
+        tobj = _ccase(titem, ctype)
+    return tobj

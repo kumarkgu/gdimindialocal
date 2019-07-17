@@ -1,11 +1,7 @@
 import os
 from baselib.utils import base_util as bu
 from baselib.utils.Logger import Logger
-try:
-    from .CredentialManager import CredentialManager
-except ImportError:
-    from baselib.database.CredentialManager import CredentialManager
-# from . import CredentialManager as cm
+from baselib.security.credentialmanager import CredentialManager
 
 
 class BaseConnection:
@@ -133,11 +129,16 @@ class BaseConnection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def _get_config_file(self):
+    @staticmethod
+    def _get_config_file():
+        def _get_top_path():
+            tpath = os.path.dirname(__file__)
+            tpath = os.path.dirname(tpath)
+            return "{}/security/config".format(tpath)
         return "{}{}{}".format(
-            os.path.dirname(__file__),
+            _get_top_path(),
             bu.get_path_separator(),
-            "password.cfg"
+            "credentials.cfg"
         )
 
     def get_config_details(self, sectionname, passphrase):

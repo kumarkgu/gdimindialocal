@@ -1,13 +1,9 @@
 import configparser
 import os
-from baselib.utils import security as sec
 from baselib.utils import base_util as bu
 from baselib.utils import objects as ob
-try:
-    from .UserAuthorization import UserAuthorization
-except ImportError:
-    from baselib.database.UserAuthorization import UserAuthorization
-# from . import UserAuthorization as ua
+from . import security as sec
+from .userauthorization import UserAuthorization
 
 
 class CredentialManager:
@@ -36,7 +32,8 @@ class CredentialManager:
         self.authfile = self._get_auth_file(configfile)
         self.listsep = listsep
 
-    def _get_auth_file(self, configfile):
+    @staticmethod
+    def _get_auth_file(configfile):
         return "{}{}{}".format(
             os.path.dirname(configfile),
             bu.get_path_separator(),
