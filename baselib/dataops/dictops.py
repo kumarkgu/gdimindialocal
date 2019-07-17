@@ -1,6 +1,3 @@
-import copy
-
-
 class DictOps:
     def __init__(self, clist=None, cdict=None, default=None):
         self.clist = clist
@@ -61,6 +58,3 @@ class DictOps:
                 )
             )
         return retlist
-
-
-

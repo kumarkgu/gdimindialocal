@@ -1,6 +1,6 @@
 from baselib.utils import base_util as bu
 from tabula import convert_into
-from baselib.image.imagetxt import ReadImage
+from baselib.image.imagetext import ReadImage
 
 # from tabula import wrapper
 # import json

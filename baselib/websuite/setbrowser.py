@@ -6,7 +6,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
-from baselib.image.imagebase import imagebase as ip
+from baselib.image.imagebase import imgbase as ip
 
 
 # from bs4 import BeautifulSoup as bs

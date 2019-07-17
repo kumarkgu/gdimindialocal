@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
-from baselib.image.imagebase import imageerror as ie
-from baselib.image.imagebase.imagebase import ImageBase
+from .imagebase.imgbase import ImageBase
+from baselib.userexception import baserror as ce
 
 
 class ProcessImage(ImageBase):
@@ -71,7 +71,7 @@ class ProcessImage(ImageBase):
                 assert isinstance(image, str)
                 image = self.read_image(imagefile=image)
             except AssertionError:
-                raise ie.ImageOrImageFileNotValidErr(
+                raise ce.ImageOrImageFileNotValidErr(
                     "Input: {} is neither a valid Image File or Image"
                     " Array".format(image)
                 )
@@ -90,9 +90,9 @@ class ProcessImage(ImageBase):
         try:
             score = self._calculate_blur(image)
         except cv2.error as err:
-            raise ie.ImageCV2Err(str(err))
+            raise ce.ImageCV2Err(str(err))
         if score < threshold:
-            raise ie.ImageBlurrErr(str(score))
+            raise ce.ImageBlurrErr(str(score))
         return 0
 
     def rotate_image(self, imagedata=None, **kwargs):
@@ -104,7 +104,7 @@ class ProcessImage(ImageBase):
                 assert isinstance(image, str)
                 image = self.read_image(imagefile=image)
             except AssertionError:
-                raise ie.ImageOrImageFileNotValidErr(
+                raise ce.ImageOrImageFileNotValidErr(
                     "Input: {} is neither a valid Image File or Image"
                     " Array".format(image)
                 )

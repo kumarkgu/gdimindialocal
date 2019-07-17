@@ -494,7 +494,7 @@ oigr.wrap_process_files(outputfile=voutputfile, errorfile=verrorfile)
 from baselib.utils import Logger as lo
 from baselib.utils import base_util as bu
 from baselib.websuite import setbrowser as sb
-from baselib.image import imagetxt as it
+from baselib.image import imagetext as it
 # from selenium.common.exceptions import NoSuchElementException
 # from PIL import Image
 # from io import BytesIO

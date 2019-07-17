@@ -5,7 +5,7 @@ from io import BytesIO
 import base64
 import urllib.parse as url
 import urllib.request as req
-from baselib.image.imagebase import imageerror as ie
+from baselib.userexception import baserror as ie
 
 
 class ImageBase:
@@ -41,7 +41,7 @@ class ImageBase:
             if image is None:
                 raise ValueError
         except ValueError:
-            raise ie.ImageFileNotReadErr(
+            raise ie.FileNotReadErr(
                 "File: {} cannot be read".format(self.imagefile)
             )
         return image
@@ -51,7 +51,7 @@ class ImageBase:
             if image is None:
                 image = self.read_image(imagefile=imagefile)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        except ie.ImageFileNotReadErr:
+        except ie.FileNotReadErr:
             raise
         except Exception:
             raise
@@ -61,18 +61,20 @@ class ImageBase:
         else:
             return image
 
-    def inverse_image(self, image):
+    @staticmethod
+    def inverse_image(image):
         return cv2.bitwise_not(image)
 
-    def write_to_file(self, image, outfile=None):
+    @staticmethod
+    def write_to_file(image, outfile=None):
         if outfile:
             cv2.imwrite(outfile, image)
 
 
 def convert_to_greyscale(filename, outfile=None):
-    __oimage = cv2.imread(filename)
-    __oimage = cv2.cvtColor(__oimage, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite(outfile, __oimage)
+    objimage = cv2.imread(filename)
+    objimage = cv2.cvtColor(objimage, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite(outfile, objimage)
 
 
 def save_image(image, filepath):
@@ -84,14 +86,14 @@ def crop_image(image, box):
 
 
 def read_image_base64(image):
-    __oimage = Image.open(BytesIO(base64.b64decode(image)))
-    return __oimage
+    objimage = Image.open(BytesIO(base64.b64decode(image)))
+    return objimage
 
 
 def image_crop_save_base64(image, **kwargs):
-    __oimage = read_image_base64(image)
+    objimage = read_image_base64(image)
     if kwargs["box"]:
-        __oimage = crop_image(__oimage, kwargs["box"])
+        objimage = crop_image(objimage, kwargs["box"])
     if kwargs["filepath"]:
-        save_image(__oimage, kwargs["filepath"])
-    return __oimage
+        save_image(objimage, kwargs["filepath"])
+    return objimage
