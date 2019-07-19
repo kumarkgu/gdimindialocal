@@ -11,6 +11,7 @@ bleach==3.1.0
 certifi==2019.3.9
 cffi==1.12.2
 chardet==3.0.4
+Click==7.0
 cloudinary==1.15.0
 colorama==0.4.1
 crypto==1.4.1
@@ -22,6 +23,8 @@ distro==1.4.0
 dlib==19.17.0
 entrypoints==0.3
 et-xmlfile==1.0.1
+face-recognition==1.2.3
+face-recognition-models==0.3.0
 future==0.17.1
 gast==0.2.2
 grpcio==1.19.0
