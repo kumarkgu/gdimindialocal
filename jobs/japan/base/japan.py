@@ -100,14 +100,14 @@ class JapanProcess:
                     break
             if keyname == "XymaxED":
                 if keyvalue == 0:
-                    from baselib.pdf.jp_xymaxED import XymaxED
+                    from jobs.japan.base.jp_xymaxED import XymaxED
                     o_xymaxED = self.create_object(XymaxED)
                     self.filetype["XymaxED"] = 1
                 o_xymaxED.process_pdf(pdffile=pdffile, skippage = 1)
                 fileprocess = True
             if keyname == "XymaxKansai":
                 if keyvalue == 0:
-                    from baselib.pdf.jp_xymaxKansai import XymaxKansai
+                    from jobs.japan.base.jp_xymaxKansai import XymaxKansai
                     o_xymaxKansai = self.create_object(XymaxKansai)
                     self.filetype["XymaxKansai"] = 1
                 o_xymaxKansai.process_pdf(pdffile=pdffile, skippage=0)
@@ -121,49 +121,49 @@ class JapanProcess:
             #     fileprocess = True
             elif keyname == "MFBM":
                 if keyvalue == 0:
-                    from baselib.pdf.jp_mfbm import MFBMFile
+                    from jobs.japan.base.jp_mfbm import MFBMFile
                     o_mfbm = self.create_object(MFBMFile)
                     self.filetype["MFBM"] = 1
                 o_mfbm.process_pdf(pdffile=pdffile)
                 fileprocess = True
             elif keyname == 'Nissay':
                 if keyvalue == 0:
-                    from baselib.pdf.jp_Nissay import Nissay
+                    from jobs.japan.base.jp_Nissay import Nissay
                     o_nissay = self.create_object(Nissay)
                     self.filetype["Nissay"] = 1
                 o_nissay.process_pdf(pdffile= pdffile, skippage = 1)
                 fileprocess = True
             elif keyname == 'MitsuiFudosan':
                 if keyvalue == 0:
-                    from baselib.pdf.jp_MitsuiFudosan import MitsuiFudosan
+                    from jobs.japan.base.jp_MitsuiFudosan import MitsuiFudosan
                     o_MitsuiFudosan = self.create_object(MitsuiFudosan)
                     self.filetype["MitsuiFudosan"] = 1
                 o_MitsuiFudosan.process_pdf(pdffile= pdffile)
                 fileprocess = True
             elif keyname in ('NomuraFudosanPartners'):
                 if keyvalue == 0:
-                    from baselib.pdf.jp_NomuraFudosanPartners import NomuraFudosanPartners
+                    from jobs.japan.base.jp_NomuraFudosanPartners import NomuraFudosanPartners
                     o_NomuraFudosanPartners = self.create_object(NomuraFudosanPartners)
                     self.filetype["NomuraFudosanPartners"] = 1
                 o_NomuraFudosanPartners.process_pdf(pdffile= pdffile, skippage = 2)
                 fileprocess = True
             elif keyname in ('Apple'):
                 if keyvalue == 0:
-                    from baselib.pdf.jp_apple import Apple
+                    from jobs.japan.base.jp_apple import Apple
                     o_Apple = self.create_object(Apple)
                     self.filetype["Apple"] = 1
                 o_Apple.process_pdf(pdffile= pdffile)
                 fileprocess = True
             elif keyname in ('CRE'):
                 if keyvalue == 0:
-                    from baselib.pdf.jp_cre import CRE
+                    from jobs.japan.base.jp_cre import CRE
                     o_CRE = self.create_object(CRE)
                     self.filetype["CRE"] = 1
                 o_CRE.process_pdf(pdffile= pdffile)
                 fileprocess = True
             elif keyname in ('PureJapan'):
                 if keyvalue == 0:
-                    from baselib.pdf.jp_PureJapan import PureJapan
+                    from jobs.japan.base.jp_PureJapan import PureJapan
                     o_PureJapan = self.create_object(PureJapan)
                     self.filetype["PureJapan"] = 1
                 o_PureJapan.process_pdf(pdffile=pdffile)

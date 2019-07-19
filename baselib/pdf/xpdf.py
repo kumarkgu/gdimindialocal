@@ -9,14 +9,14 @@ class PDFException(Exception):
 
 
 class PDFUnreadableFont(PDFException):
-    def __init__(self, message, errno=-17201):
+    def __init__(self, message, errno=-18201):
         self.message = message
         self.errono = errno
         super(PDFUnreadableFont, self).__init__(message, errno)
 
 
 class PDFManualProcess(PDFException):
-    def __init__(self, message, errno=-17202):
+    def __init__(self, message, errno=-19202):
         self.message = message
         self.errono = errno
         super(PDFManualProcess, self).__init__(message, errno)

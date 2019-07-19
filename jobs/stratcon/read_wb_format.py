@@ -2,7 +2,7 @@ from docx import Document
 import unicodedata as ud
 import glob
 import re
-from baselib.utils.SQLConnection import MSSqlConnection
+from baselib.database.SQLConnection import MSSqlConnection
 from baselib.utils.Logger import Logger
 # from docx.text import run
 # from functools import reduce

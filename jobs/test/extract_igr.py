@@ -5,8 +5,7 @@ from typing import Pattern
 
 from baselib.pdf import xpdf as pdf
 from baselib.utils import Logger as lo
-from baselib.utils import base_util as bu
-from baselib.utils import excelprocess as ep
+from baselib.excelops import excel_ops_old as ep
 from baselib.utils import fileobjects as fo
 
 
@@ -491,10 +490,7 @@ oigr.wrap_process_files(outputfile=voutputfile, errorfile=verrorfile)
 
 # from baselib.utils import mailops as mo
 # import re
-from baselib.utils import Logger as lo
 from baselib.utils import base_util as bu
-from baselib.websuite import setbrowser as sb
-from baselib.image import imagetext as it
 # from selenium.common.exceptions import NoSuchElementException
 # from PIL import Image
 # from io import BytesIO

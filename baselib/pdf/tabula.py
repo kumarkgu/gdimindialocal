@@ -7,7 +7,8 @@ class TabulaPDF:
         self.tabjarfile = tabulajarfile
         # self.tabulacmnd = self._set_tabula_command()
 
-    def _set_tabula_command(self, runtype="lattice"):
+    @staticmethod
+    def _set_tabula_command(runtype="lattice"):
         if runtype == "stream":
             return "java -Dfile.encoding=UTF-8 -jar {0}/{1} -t -p {2} -a {3}" \
                    " -i -f CSV -o {4} {5}"

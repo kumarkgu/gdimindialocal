@@ -1,6 +1,6 @@
 import os
-from baselib.pdf.japan import JapanProcess
-from baselib.pdf.jp_tosql import tosql
+from jobs.japan.base.japan import JapanProcess
+from jobs.japan.base.jp_tosql import tosql
 
 def run_process(yearmonth, name):
 

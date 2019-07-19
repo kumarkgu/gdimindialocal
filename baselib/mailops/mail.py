@@ -1,4 +1,4 @@
-from baselib import gmail as gm
+from baselib.mailops.gmail import gmail as gm
 
 
 class MailInitialize:

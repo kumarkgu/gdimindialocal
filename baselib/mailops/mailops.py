@@ -1,6 +1,6 @@
-from .Logger import Logger
+from baselib.utils.Logger import Logger
 from .mail import MyGmail
-from baselib.gmail import exceptions as ex
+from baselib.mailops.gmail import exceptions as ex
 from datetime import datetime
 
 log = Logger("GMail Connection").getlog()

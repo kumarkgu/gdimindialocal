@@ -1,8 +1,8 @@
 import re
 import csv
-from baselib.pdf.jp_base_process import JapanBasePDF
+from jobs.japan.base.jp_base_process import JapanBasePDF
 from baselib.utils import fileobjects as fo
-from baselib.utils import csv_process as cp
+from baselib.csvops import csv_process as cp
 
 
 class MitsuiFudosan(JapanBasePDF):

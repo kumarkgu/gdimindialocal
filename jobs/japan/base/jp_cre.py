@@ -1,19 +1,19 @@
-import re
 import csv
-from baselib.pdf.jp_base_process import JapanBasePDF
+from jobs.japan.base.jp_base_process import JapanBasePDF
 from baselib.utils import fileobjects as fo
-from baselib.utils import csv_process as cp
+from baselib.csvops import csv_process as cp
 
-class PureJapan(JapanBasePDF):
+
+class CRE(JapanBasePDF):
     def __init__(self, tabuladir=None, tabulajarfile=None, xpdfdir=None,
                  processdir=None, tempname="temp", outname="output", auditfile = None, dqoutdir = None):
-        super(PureJapan, self).__init__(
+        super(CRE, self).__init__(
             xpdfdir=xpdfdir, tabuladir=tabuladir, tabulajarfile=tabulajarfile,
             processdir=processdir, tempname=tempname, outname=outname,
             auditfile=auditfile
         )
-        self.begin = None
-        self.end = None
+        self.begin = "　　　倉 庫 物 件 情 報 （ 貸主 ）"
+        self.end = "取引形態"
         self.pivotcolumn = None
         self.regexppivot = None
         self.runtype = 'lattice'
@@ -27,43 +27,36 @@ class PureJapan(JapanBasePDF):
         try:
             with open(infile, 'rt', encoding='utf-8') as r_fileno:
                 reader = csv.reader(r_fileno, dialect='excel')
-                lineno = 0
                 for line in reader:
                     outline = [field.replace("\n", ";").rstrip() for field in line]
                     length = len(outline) - outline.count("")
-                    if (lineno > 0 and outline[0] != "物件名;所在地") or lineno == 0:
-                        #split 8 columns
-                        for i in [8,7,6,5,4,3,2,0]:
-                            split = outline[i].split(";")
-                            if lineno > 0:
-                                # handle excpetion where more than 2 lines in 募集階
-                                if i == 2 and outline[i].count(";") > 1:
-                                    split[0] = re.search('(.+?階)', outline[i])[1]
-                                    split[1] = outline[i].replace(split[0]+';','')
-                                    del split[2:]
-                                # handle excpetion where more than 2 lines in 構造; 規模; 竣⼯
-                                if i == 8 and outline[i].count(";") > 2:
-                                    #match the string till last 造
-                                    split[0] = outline[i][0:outline[i].rfind(re.findall('(.?造)', outline[i])[-1]) + 2]
-                                    split[1] = outline[i].replace(split[0]+';', '').split(";")[0]
-                                    split[2] = outline[i].replace(split[0]+';', '').split(";")[1]
-                                    del split[3:]
-                                if outline[i].count(";") < 1:
-                                    split.insert(1, '')
-                            for j in range(1, len(split)):
-                                outline.insert(i + j, split[j])
-                            outline[i] = split[0]
-                        if lineno == 0:
-                            split = outline[9].split("/")
-                            outline.insert(10, split[1])
-                            outline[9] =  split[0]
-                            outline[9] = split[0]
-                            #overwrite the header names for 賃料坪単価(税別) and 共益費坪単価(税別)
-                            outline[6] = '賃料' + outline[6]
-                            outline[8] = '共益費' + outline[8]
-
-                        writer.writerow(outline)
-                    lineno += 1
+                    #retain the location
+                    if length == 1:
+                        if outline[0] != "":
+                            location = outline[0]
+                        elif outline[1] != "":
+                            location = outline[1]
+                    # determine it's 貸主 or 媒介
+                    elif length == 2:
+                        if "貸主" in outline[1]:
+                            OwnerType = "貸主"
+                        elif "媒介" in outline[1]:
+                            OwnerType = " 媒介"
+                    #determine if it's the header
+                    elif length > 2:
+                        if hasheadr == 0:
+                            if outline[0] == "No":
+                                outline = ["OwnerType", "Location","New?"] + outline
+                            elif outline[1] == "No":
+                                outline = ["OwnerType", "Location", "New?"] + outline[1:]
+                            writer.writerow(outline)
+                            hasheadr = 1
+                        elif outline[0] != "No" and  outline[1] != "No":
+                            if outline[0] not in ("New", ""):
+                                outline= [OwnerType, location,""] + outline
+                            else:
+                                outline = [OwnerType, location] + outline
+                            writer.writerow(outline)
         except:
             raise
         finally:
@@ -108,6 +101,6 @@ class PureJapan(JapanBasePDF):
         finally:
             tempfileno.close()
         self._process_csv(tempout, outfile)
-        #self.dq_check(auditfile=self.auditfile , pdffile= pdffile, outfile= outfile, auditout = dqout)
+        self.dq_check(auditfile=self.auditfile , pdffile= pdffile, outfile= outfile, auditout = dqout)
 
 

@@ -3,6 +3,7 @@ import os
 from baselib.utils import base_util as bu
 from baselib.utils import fileobjects as fo
 from baselib.utils.Logger import Logger
+from . import sperror as se
 
 
 class SharePoint:
@@ -20,7 +21,7 @@ class SharePoint:
 
     @staticmethod
     def _set_sessionfiledir(filename):
-        t_dir = os.path.basename(filename)
+        t_dir = os.path.dirname(filename)
         fo.make_base_dir(filename=filename)
         return t_dir
 
@@ -42,7 +43,18 @@ class SharePoint:
     def connect(self, url, **kwargs):
         t_user = kwargs.get("username", None)
         t_pass = kwargs.get("password", None)
+        if t_user is None:
+            raise se.NoUserNamePassword(
+                "No UserName and Password Provided"
+            )
         self._authenticate(url=url, username=t_user, password=t_pass)
+        return self.session
+
+    def save(self):
+        self.session.save(filename=self.sessfile)
+
+    def reload(self):
+        self.session = sharepy.load(filename=self.sessfile)
         return self.session
 
 

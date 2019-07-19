@@ -14,7 +14,6 @@
 import optparse
 from datetime import datetime
 import time
-# from jobs.hawk import hawk_env as he
 import os
 
 
@@ -25,7 +24,8 @@ class CommandLineParse:
         self._parse_command(self.parser)
         self.options, self.arguments = self.parser.parse_args()
 
-    def _parse_command(self, parser):
+    @staticmethod
+    def _parse_command(parser):
         parser.add_option(
             '-r', '--region', dest='region', default=None,
             help='Region for which the HAWK process needs to run'
@@ -118,10 +118,10 @@ class CommandLineParse:
                     self.options.mode)
             )
         if self.options.mode.upper() == "DAILY":
-            __vdate = time.strptime(self.options.refreshdate, "%Y-%m-%d")
-            __vcurr = time.strptime(datetime.now().strftime("%Y-%m-%d"),
+            refdate = time.strptime(self.options.refreshdate, "%Y-%m-%d")
+            curdate = time.strptime(datetime.now().strftime("%Y-%m-%d"),
                                     "%Y-%m-%d")
-            if __vcurr <= __vdate:
+            if curdate <= refdate:
                 raise Exception(
                     "Invalid Refresh date [{}], must be less than TODAY".format(
                         self.options.refreshdate
@@ -129,7 +129,6 @@ class CommandLineParse:
                 )
 
     def setvalues(self):
-        __vpath = os.path.dirname(os.path.abspath(self.file))
-        print(__vpath)
+        currpath = os.path.dirname(os.path.abspath(self.file))
+        print(currpath)
         print(self.file)
-        # __venv = __vpath[__vpath.rfind(he.get_path_separator()) + 1:]
