@@ -9,7 +9,7 @@ from baselib.userexception import baserror as ie
 
 
 class ImageBase:
-    def __init__(self, imagefile):
+    def __init__(self, imagefile=None):
         self.imagefile = imagefile
 
     def _reset_image_file(self, imagefile):
@@ -20,15 +20,19 @@ class ImageBase:
         return url.urlparse(path).scheme in ('http', 'https')
 
     @staticmethod
-    def read_url(path):
-        response = req.urlopen(path)
+    def read_url(urlpath):
+        response = req.urlopen(urlpath)
         image = np.asarray(bytearray(response.read()), dtype="uint8")
         image = cv2.imdecode(image, cv2.IMREAD_COLOR)
         return image
 
     @staticmethod
-    def read_file(path):
-        return cv2.imread(path)
+    def read_file(imagefile):
+        return cv2.imread(imagefile)
+
+    @staticmethod
+    def convertcolor(image, colorcode=None):
+        return cv2.cvtColor(image, colorcode)
 
     def read_image(self, imagefile=None):
         try:

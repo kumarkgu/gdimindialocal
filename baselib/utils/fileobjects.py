@@ -153,6 +153,20 @@ def file_last_dropped(dir, timediff=None):
     return retlist
 
 
+def get_all_files(path, extensions=None):
+    if extensions:
+        try:
+            assert isinstance(extensions, list)
+        except AssertionError:
+            raise AssertionError("File Extenions are not in a list")
+    else:
+        extensions = ["*.*"]
+    allfiles = []
+    for extension in extensions:
+        allfiles.extend(glob.glob("{}/{}".format(path, extension)))
+    return allfiles
+
+
 class FileWatcher:
     def __init__(self, path, timetype=None, filename=None):
         self.path = path

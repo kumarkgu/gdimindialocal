@@ -3,7 +3,6 @@ import requests
 import urllib.request as ur
 import time
 from urllib.request import Request, urlopen
-
 from requests_ntlm import HttpNtlmAuth
 
 # def test_using_sharepoint(pwuser, pwpass, pwurl):
