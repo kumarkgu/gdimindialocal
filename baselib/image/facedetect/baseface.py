@@ -1,8 +1,8 @@
 import cv2
 import os
-import pickle
 import face_recognition as fr
 from baselib.image.imagebase import imgbase as ib
+from baselib.utils.fileobjects import PickleOperation
 
 
 class BaseFaceOperation:
@@ -43,16 +43,31 @@ class BaseFaceOperation:
 
     def write_data(self, encodefile=None, encodes=None, names=None):
         if encodefile is None:
-            encodefile = self.outpath
+            encodefile = self.encodefile
         data = {"encodings": encodes, "names": names}
-        fileno = open(encodefile, "wb")
-        fileno.write(pickle.dumps(data))
-        fileno.close()
+        pickleobj = PickleOperation()
+        pickleobj.write_data(data=data, picklefile=encodefile)
 
     def read_data(self, encodefile=None):
         encodefile = encodefile if encodefile else self.encodefile
-        data = pickle.loads(open(encodefile, "rb").read())
+        pickleobj = PickleOperation()
+        data = pickleobj.read_data(picklefile=encodefile)
         return data
+
+    def append_data(self, encodefile=None, encodes=None, names=None):
+        encodefile = encodefile if encodefile else self.encodefile
+        pickleobj = PickleOperation()
+        try:
+            data = pickleobj.read_data(picklefile=encodefile)
+            t_encodes = data["encodings"]
+            t_names = data["names"]
+        except FileNotFoundError:
+            t_encodes = []
+            t_names = []
+        t_encodes.extend(encodes)
+        t_names.extend(names)
+        self.write_data(encodefile=encodefile, encodes=t_encodes,
+                        names=t_names)
 
     @staticmethod
     def _get_name(matches, data):

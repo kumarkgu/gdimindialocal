@@ -42,7 +42,9 @@ class RecogFace(BaseFaceOperation):
                         color=(0, 255, 0), thickness=2)
 
     @staticmethod
-    def show_image(image):
+    def show_image(image, def_window=True):
+        if not def_window:
+            cv2.namedWindow("Image", cv2.WINDOW_NORMAL)
         cv2.imshow("Image", image)
         cv2.waitKey(0)
 

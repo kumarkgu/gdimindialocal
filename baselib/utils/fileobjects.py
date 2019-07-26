@@ -1,9 +1,10 @@
 import os
 import shutil
 import glob
-import datetime
 import time
+import pickle
 from baselib.utils import dateops as dops
+from baselib.userexception import baserror as be
 
 
 def checkfile(func):
@@ -167,15 +168,33 @@ def get_all_files(path, extensions=None):
     return allfiles
 
 
-class FileWatcher:
-    def __init__(self, path, timetype=None, filename=None):
-        self.path = path
-        self.times = self._convert_time(timetype)
-        pass
+class PickleOperation:
+    def __init__(self, picklefile=None):
+        self.picklefile = picklefile
 
-    @staticmethod
-    def _convert_time(timetype=None):
-        return 1
+    def write_data(self, data, picklefile=None):
+        picklefile = picklefile if picklefile else self.picklefile
+        if not picklefile:
+            raise NameError("Pickle File is not defined or passed")
+        if os.path.isdir(picklefile):
+            errmesg = "Pickle File: {}. defined is a directory".format(
+                picklefile
+            )
+            raise be.FileIsADirectory(errmesg)
+        with open(picklefile, "wb") as fileno:
+            pickle.dump(data, fileno)
 
-    def reset_vals(self):
-        pass
+    def read_data(self, picklefile=None):
+        picklefile = picklefile if picklefile else self.picklefile
+        if not picklefile:
+            raise NameError("Pickle File is not defined or passed")
+        if os.path.isdir(picklefile):
+            errmesg = "Pickle File: {}. defined is a directory".format(
+                picklefile
+            )
+            raise be.FileIsADirectory(errmesg)
+        if not os.path.isfile(picklefile):
+            raise FileNotFoundError
+        with open(picklefile, "rb") as fileno:
+            data = pickle.load(fileno)
+        return data

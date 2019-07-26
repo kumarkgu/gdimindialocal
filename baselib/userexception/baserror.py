@@ -16,6 +16,13 @@ class CommandNotFound(BaseCOEErr):
         super(CommandNotFound, self).__init__(message, errno)
 
 
+class FileIsADirectory(BaseCOEErr):
+    def __init__(self, message, errno=-16003):
+        self.message = message
+        self.errono = errno
+        super(FileIsADirectory, self).__init__(message, errno)
+
+
 # All Image Related Error
 class BaseImageErr(BaseCOEErr):
     pass

@@ -34,11 +34,13 @@ class TestFace:
             ))
             image, rgbdata = efobj.read_image(imagefile=files)
             efobj.encode_image(rgbdata=rgbdata, imagefile=files)
-        efobj.write_data(encodefile=self.encodefile,
-                         encodes=efobj.knownencode, names=efobj.knownname)
+        # efobj.write_data(encodefile=self.encodefile,
+        #                  encodes=efobj.knownencode, names=efobj.knownname)
+        efobj.append_data(encodefile=self.encodefile,
+                          encodes=efobj.knownencode, names=efobj.knownname)
 
     def match_image(self, checkfile=None, encodefile=None, model=None,
-                    tolerance=None):
+                    tolerance=None, def_window=True):
         checkfile = checkfile if checkfile else self.checkfile
         encodefile = encodefile if encodefile else self.encodefile
         model = model if model else self.model
@@ -50,7 +52,7 @@ class TestFace:
         data = frobj.read_data()
         matches = frobj.match_face(encodings=encodes, data=data)
         frobj.draw_box(locations=locs, names=matches, image=frobj.image)
-        frobj.show_image(frobj.image)
+        frobj.show_image(frobj.image, def_window=def_window)
 
 
 def main_run(process=None, model=None):
@@ -63,7 +65,10 @@ def main_run(process=None, model=None):
         inputdir = "{}/{}".format(path, "source_pics")
         objtest.encodeimage(imagefile=inputdir)
     else:
-        checkimage = "{}/{}".format(path, "TeamPicture.png")
+        # checkimage = "{}/check_pics/{}".format(path, "TeamPicture.png")
+        # checkimage = "{}/check_pics/{}".format(path, "Rashmi_Venkatesh.jpg")
+        # checkimage = "{}/check_pics/{}".format(path, "Gunjan_Marriage.jpg")
+        checkimage = "{}/check_pics/{}".format(path, "Gunjan_Family.jpg")
         objtest.match_image(checkfile=checkimage, tolerance=0.5)
 
 
