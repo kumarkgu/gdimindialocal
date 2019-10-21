@@ -158,7 +158,7 @@ virtualenv==16.4.3
 virtualenvwrapper-win==1.2.5
 wcwidth==0.1.7
 webencodings==0.5.1
-Werkzeug==0.15.2
+Werkzeug==0.15.3
 widgetsnbextension==3.4.2
 win-unicode-console==0.5
 windmill==1.6
