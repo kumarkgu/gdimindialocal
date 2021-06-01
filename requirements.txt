@@ -150,7 +150,7 @@ testpath==0.4.2
 tornado==6.0.2
 traitlets==4.3.2
 Unidecode==1.0.23
-urllib3==1.24.1
+urllib3==1.26.5
 usaddress==0.5.10
 utils==0.9.0
 validators==0.12.5
