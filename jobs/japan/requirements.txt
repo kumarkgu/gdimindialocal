@@ -15,7 +15,7 @@ numpy==1.14.2
 olefile==0.44
 pandas==0.22.0
 pandas-datareader==0.6.0
-Pillow==4.2.1
+Pillow==8.2.0
 post==0.0.0
 promise==2.1
 public==0.0.0
